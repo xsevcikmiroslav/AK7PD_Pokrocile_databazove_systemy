@@ -80,6 +80,18 @@ namespace BusinessLayer.Managers
         {
             var usersBorrowings =
                 _borrowingRepository
+                .GetUsersCurrentBorrowings(userId)
+                .Select(r => _mapper.Map<Borrowing>(r));
+
+            return
+                usersBorrowings.
+                Select(r => _mapper.Map<Book>(_bookRepository.Get(r._id)));
+        }
+
+        public IEnumerable<Book> GetUsersBorrowedBooksHistory(string userId)
+        {
+            var usersBorrowings =
+                _borrowingRepository
                 .GetUsersBorrowingsHistory(userId)
                 .Select(r => _mapper.Map<Borrowing>(r));
 
@@ -101,7 +113,9 @@ namespace BusinessLayer.Managers
 
         public Book UpdateBook(Book book)
         {
-            throw new NotImplementedException();
+            var updateEntity = _mapper.Map<BookDto>(book);
+            _bookRepository.Update(updateEntity);
+            return _mapper.Map<Book>(updateEntity);
         }
     }
 }

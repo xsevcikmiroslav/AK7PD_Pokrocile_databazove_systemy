@@ -19,12 +19,12 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_CreateBook_Success()
         {
-            var newBook = CreateBookEntity();
+            var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
         }
 
-        private Book CreateBookEntity()
+        private Book GetBookEntity()
         {
             return new Book
             {
@@ -40,7 +40,7 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_BorrowAndThenReturnBook_Success()
         {
-            var newBook = CreateBookEntity();
+            var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
 
@@ -62,7 +62,7 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_CreateThenDeleteBook_Success()
         {
-            var newBook = CreateBookEntity();
+            var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
 
@@ -80,7 +80,7 @@ namespace BusinessLayerTests
         {
             for (int i = 0; i < 5; i++)
             {
-                var newBook = CreateBookEntity();
+                var newBook = GetBookEntity();
                 newBook.Title = $"{newBook.Title} {i}";
                 newBook.YearOfPublication = newBook.YearOfPublication + i;
                 newBook = _bookManager.CreateBook(newBook);
@@ -100,7 +100,7 @@ namespace BusinessLayerTests
         {
             for (int i = 0; i < 5; i++)
             {
-                var newBook = CreateBookEntity();
+                var newBook = GetBookEntity();
                 newBook.Title = $"{newBook.Title} {i}";
                 newBook.YearOfPublication = newBook.YearOfPublication + i;
                 newBook = _bookManager.CreateBook(newBook);
@@ -119,7 +119,7 @@ namespace BusinessLayerTests
         {
             for (int i = 0; i < 5; i++)
             {
-                var newBook = CreateBookEntity();
+                var newBook = GetBookEntity();
                 newBook.Title = $"{newBook.Title} {i}";
                 newBook.YearOfPublication = newBook.YearOfPublication + i;
                 newBook = _bookManager.CreateBook(newBook);
@@ -138,24 +138,41 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-
+            Assert.IsTrue(false);
         }
 
+        [TestMethod]
         public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasNoBorrowedBooks_NoBooksReturned()
         {
-
+            Assert.IsTrue(false);
         }
 
         [TestMethod]
         public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-
+            Assert.IsTrue(false);
         }
 
         [TestMethod]
         public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasNoBorrowedBooks_BooksSuccessfullyRetrieved()
         {
+            Assert.IsTrue(false);
+        }
 
+        [TestMethod]
+        public void BookManager_CreateBookThenUpdateBook_SuccessfullyUpdated()
+        {
+            var newBook = GetBookEntity();
+            newBook = _bookManager.CreateBook(newBook);
+            Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+
+            newBook.Title = "Book Manager Test Update";
+            newBook.NumberOfLicences = 10;
+
+            var updatedBook = _bookManager.UpdateBook(newBook);
+
+            Assert.AreEqual("Book Manager Test Update", updatedBook.Title);
+            Assert.AreEqual(10, updatedBook.NumberOfLicences);
         }
 
         [TestCleanup]
