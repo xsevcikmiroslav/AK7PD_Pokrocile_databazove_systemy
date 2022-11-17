@@ -14,7 +14,7 @@ namespace DataLayer.Repositories
         public BorrowingRepository(string connectionString)
             : base(connectionString, "Borrowing") { }
 
-        public IEnumerable<BorrowingDto> GetAllBorrowingsByUser(string userId)
+        public IEnumerable<BorrowingDto> GetUsersAllBorrowings(string userId)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
@@ -27,7 +27,7 @@ namespace DataLayer.Repositories
             }
         }
 
-        public IEnumerable<BorrowingDto> GetCurrentBorrowingsByUser(string userId)
+        public IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 

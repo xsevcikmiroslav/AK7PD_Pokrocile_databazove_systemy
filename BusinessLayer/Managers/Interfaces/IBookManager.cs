@@ -16,7 +16,9 @@ namespace BusinessLayer.Managers.Interfaces
 
         Book GetBook(string bookId);
 
-        IEnumerable<Book> GetBooksCurrentlyBorrowedByUser(string UserId);
+        IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string UserId);
+
+        IEnumerable<Book> GetUsersBorrowedBooksHistory(string UserId);
 
         public void ReturnBook(string bookId, string userId);
 

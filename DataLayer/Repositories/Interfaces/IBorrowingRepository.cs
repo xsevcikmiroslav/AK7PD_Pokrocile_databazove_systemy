@@ -6,8 +6,8 @@ namespace DataLayer.Repositories.Interfaces
     {
         BorrowingDto GetByUserAndBook(string userId, string bookId);
 
-        IEnumerable<BorrowingDto> GetAllBorrowingsByUser(string userId);
+        IEnumerable<BorrowingDto> GetUsersAllBorrowings(string userId);
 
-        IEnumerable<BorrowingDto> GetCurrentBorrowingsByUser(string userId);
+        IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId);
     }
 }

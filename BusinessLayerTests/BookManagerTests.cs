@@ -136,12 +136,24 @@ namespace BusinessLayerTests
         }
 
         [TestMethod]
-        public void BookManager_GetBooksCurrentlyBorrowedByUserWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
+        public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
 
         }
 
-        public void BookManager_GetBooksCurrentlyBorrowedByUserWhenUserHasNoBorrowedBooks_NoBooksReturned()
+        public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasNoBorrowedBooks_NoBooksReturned()
+        {
+
+        }
+
+        [TestMethod]
+        public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
+        {
+
+        }
+
+        [TestMethod]
+        public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasNoBorrowedBooks_BooksSuccessfullyRetrieved()
         {
 
         }

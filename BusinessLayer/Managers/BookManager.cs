@@ -76,11 +76,11 @@ namespace BusinessLayer.Managers
             return _mapper.Map<Book>(entity);
         }
 
-        public IEnumerable<Book> GetBooksCurrentlyBorrowedByUser(string userId)
+        public IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string userId)
         {
             var usersBorrowings =
                 _borrowingRepository
-                .GetCurrentBorrowingsByUser(userId)
+                .GetUsersBorrowingsHistory(userId)
                 .Select(r => _mapper.Map<Borrowing>(r));
 
             return
