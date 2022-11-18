@@ -1,10 +1,12 @@
-﻿namespace DataLayer.DTO
+﻿using MongoDB.Bson;
+
+namespace DataLayer.DTO
 {
     public class BorrowingDto : BaseDto
     {
-        public object BookId { get; set; } = new object();
+        public ObjectId BookId { get; set; } = ObjectId.Empty;
 
-        public object UserId { get; set; } = new object();
+        public ObjectId UserId { get; set; } = ObjectId.Empty;
         
         public DateTime DateTimeBorrowed { get; set; } = DateTime.MinValue;
 

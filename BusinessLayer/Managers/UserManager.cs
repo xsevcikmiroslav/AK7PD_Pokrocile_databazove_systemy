@@ -56,6 +56,11 @@ namespace BusinessLayer.Managers
             throw new NotImplementedException();
         }
 
+        public bool LoginUser(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+
         public User UpdateUser(User UserId)
         {
             throw new NotImplementedException();

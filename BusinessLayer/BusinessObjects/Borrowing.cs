@@ -10,8 +10,8 @@
 
         public DateTime DateTimeReturned { get; set; } = DateTime.MinValue;
 
-        public Book Book { get; set; } = new Book();
+        //public Book Book { get; set; } = new Book();
 
-        public User User { get; set; } = new User();
+        //public User User { get; set; } = new User();
     }
 }

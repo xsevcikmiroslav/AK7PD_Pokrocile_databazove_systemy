@@ -4,7 +4,7 @@ namespace BusinessLayer.Managers.Interfaces
 {
     public interface IBookManager
     {
-        public void BorrowBook(string bookId, string userId);
+        bool BorrowBook(string bookId, string userId);
 
         Book CreateBook(Book book);
 
@@ -20,7 +20,7 @@ namespace BusinessLayer.Managers.Interfaces
 
         IEnumerable<Book> GetUsersBorrowedBooksHistory(string UserId);
 
-        public void ReturnBook(string bookId, string userId);
+        void ReturnBook(string bookId, string userId);
 
         Book UpdateBook(Book book);
     }

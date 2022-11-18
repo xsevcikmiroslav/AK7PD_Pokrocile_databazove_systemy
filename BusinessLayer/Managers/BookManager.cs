@@ -12,22 +12,24 @@ namespace BusinessLayer.Managers
         private readonly IMapper _mapper;
         private readonly IBookRepository _bookRepository;
         private readonly IBorrowingRepository _borrowingRepository;
-        private readonly IUserRepository _userRepository;
 
         public BookManager(
             IMapper mapper,
             IBookRepository bookRepository,
-            IBorrowingRepository BorrowingRepository,
-            IUserRepository UserRepository)
+            IBorrowingRepository BorrowingRepository)
         {
             _mapper = mapper;
             _bookRepository = bookRepository;
             _borrowingRepository = BorrowingRepository;
-            _userRepository = UserRepository;
         }
 
-        public void BorrowBook(string bookId, string userId)
+        public bool BorrowBook(string bookId, string userId)
         {
+            if (!UserCanBorrowBook(userId))
+            {
+                return false;
+            }
+
             var borrowing = new Borrowing
             {
                 BookId = bookId,
@@ -40,6 +42,13 @@ namespace BusinessLayer.Managers
             var book = _bookRepository.Get(bookId);
             book.NumberOfBorrowed++;
             _bookRepository.Update(book);
+
+            return true;
+        }
+
+        private bool UserCanBorrowBook(string userId)
+        {
+            return GetUsersCurrentlyBorrowedBooks(userId).Count() < User.MAX_NUMBER_OF_BORROWED_BOOKS;
         }
 
         public Book CreateBook(Book book)
@@ -85,7 +94,7 @@ namespace BusinessLayer.Managers
 
             return
                 usersBorrowings.
-                Select(r => _mapper.Map<Book>(_bookRepository.Get(r._id)));
+                Select(r => _mapper.Map<Book>(_bookRepository.Get(r.BookId)));
         }
 
         public IEnumerable<Book> GetUsersBorrowedBooksHistory(string userId)
@@ -97,7 +106,7 @@ namespace BusinessLayer.Managers
 
             return
                 usersBorrowings.
-                Select(r => _mapper.Map<Book>(_bookRepository.Get(r._id)));
+                Select(r => _mapper.Map<Book>(_bookRepository.Get(r.BookId)));
         }
 
         public void ReturnBook(string bookId, string userId)

@@ -79,7 +79,7 @@ namespace DataLayerTest
             };
         }
 
-        private BorrowingDto CreateBorrowingEntity(object userId, object bookId)
+        private BorrowingDto CreateBorrowingEntity(ObjectId userId, ObjectId bookId)
         {
             return new BorrowingDto
             {

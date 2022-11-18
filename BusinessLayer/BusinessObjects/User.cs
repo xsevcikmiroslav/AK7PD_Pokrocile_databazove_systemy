@@ -2,6 +2,8 @@
 {
     public class User : BaseBusinessObject
     {
+        public const int MAX_NUMBER_OF_BORROWED_BOOKS = 6;
+
         public string Firstname { get; set; } = string.Empty;
 
         public string Surname { get; set; } = string.Empty;

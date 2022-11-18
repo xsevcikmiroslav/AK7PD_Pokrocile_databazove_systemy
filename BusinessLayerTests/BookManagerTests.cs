@@ -22,6 +22,7 @@ namespace BusinessLayerTests
             var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
         }
 
         private Book GetBookEntity()
@@ -43,6 +44,7 @@ namespace BusinessLayerTests
             var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
 
             _bookManager.BorrowBook(newBook._id, "876543218765432187654321");
 
@@ -65,6 +67,7 @@ namespace BusinessLayerTests
             var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
 
             var bookId = newBook._id;
 
@@ -85,6 +88,7 @@ namespace BusinessLayerTests
                 newBook.YearOfPublication = newBook.YearOfPublication + i;
                 newBook = _bookManager.CreateBook(newBook);
                 Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             }
 
             var books = _bookManager.FindBooks(FindType.AND, "Insert 2", string.Empty, 1990, string.Empty);
@@ -105,6 +109,7 @@ namespace BusinessLayerTests
                 newBook.YearOfPublication = newBook.YearOfPublication + i;
                 newBook = _bookManager.CreateBook(newBook);
                 Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             }
 
             var books = _bookManager.FindBooks(FindType.AND, "NonExisting", string.Empty, 2100, string.Empty);
@@ -124,6 +129,7 @@ namespace BusinessLayerTests
                 newBook.YearOfPublication = newBook.YearOfPublication + i;
                 newBook = _bookManager.CreateBook(newBook);
                 Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             }
 
             var books = _bookManager.FindBooks(FindType.OR, "Insert 2", string.Empty, 1992, string.Empty);
@@ -138,25 +144,107 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-            Assert.IsTrue(false);
+            var userId = "876543218765432187654321";
+
+            for (int i = 1; i <= 10; i++)
+            {
+                var newBook = GetBookEntity();
+                newBook.Title = $"{newBook.Title} {i}";
+                newBook = _bookManager.CreateBook(newBook);
+                Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
+
+                if (i % 5 == 0)
+                {
+                    _bookManager.BorrowBook(newBook._id, userId);
+                }
+            }
+
+            var books = _bookManager.GetUsersCurrentlyBorrowedBooks(userId);
+
+            Assert.AreEqual(2, books.Count());
+            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 5")));
+            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 10")));
         }
 
         [TestMethod]
         public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasNoBorrowedBooks_NoBooksReturned()
         {
-            Assert.IsTrue(false);
+            var userId = "876543218765432187654321";
+
+            for (int i = 1; i <= 10; i++)
+            {
+                var newBook = GetBookEntity();
+                newBook.Title = $"{newBook.Title} {i}";
+                newBook = _bookManager.CreateBook(newBook);
+                Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
+
+                if (i % 5 == 0)
+                {
+                    _bookManager.BorrowBook(newBook._id, userId);
+                    _bookManager.ReturnBook(newBook._id, userId);
+                }
+            }
+
+            var books = _bookManager.GetUsersCurrentlyBorrowedBooks(userId);
+
+            Assert.IsNotNull(books);
+            Assert.IsFalse(books.Any());
+            Assert.AreEqual(0, books.Count());
         }
 
         [TestMethod]
         public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-            Assert.IsTrue(false);
+            var userId = "876543218765432187654321";
+
+            for (int i = 1; i <= 10; i++)
+            {
+                var newBook = GetBookEntity();
+                newBook.Title = $"{newBook.Title} {i}";
+                newBook = _bookManager.CreateBook(newBook);
+                Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
+
+                if (i % 5 == 0)
+                {
+                    _bookManager.BorrowBook(newBook._id, userId);
+                }
+            }
+
+            var books = _bookManager.GetUsersBorrowedBooksHistory(userId);
+
+            Assert.AreEqual(2, books.Count());
+            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 5")));
+            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 10")));
         }
 
         [TestMethod]
         public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasNoBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-            Assert.IsTrue(false);
+            var userId = "876543218765432187654321";
+
+            for (int i = 1; i <= 10; i++)
+            {
+                var newBook = GetBookEntity();
+                newBook.Title = $"{newBook.Title} {i}";
+                newBook = _bookManager.CreateBook(newBook);
+                Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+                Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
+
+                if (i % 5 == 0)
+                {
+                    _bookManager.BorrowBook(newBook._id, userId);
+                    _bookManager.ReturnBook(newBook._id, userId);
+                }
+            }
+
+            var books = _bookManager.GetUsersBorrowedBooksHistory(userId);
+
+            Assert.AreEqual(2, books.Count());
+            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 5")));
+            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 10")));
         }
 
         [TestMethod]
@@ -165,6 +253,7 @@ namespace BusinessLayerTests
             var newBook = GetBookEntity();
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
 
             newBook.Title = "Book Manager Test Update";
             newBook.NumberOfLicences = 10;
