@@ -1,6 +1,6 @@
 ﻿namespace DataLayer.DTO
 {
-    public enum AccountState
+    public enum AccountStateDb
     {
         AwatingApproval = 1,
         Active,

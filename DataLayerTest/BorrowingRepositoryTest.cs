@@ -61,7 +61,7 @@ namespace DataLayerTest
                 Username = "Insertusername",
                 Salt = Encoding.UTF8.GetBytes("XIn+Dt7BHfDZtaeZF1cUY8A8yeaBPpQjpBEI0xBX5GEu+Y/wiDa9QhZdo61apD2Jujp72IXLQ3nnlBNN03GOZg=="),
                 Hash = Encoding.UTF8.GetBytes("XIn+Dt7BHfDZtaeZF1cUY8A8yeaBPpQjpBEI0xBX5GEu+Y/wiDa9QhZdo61apD2Jujp72IXLQ3nnlBNN03GOZg=="),
-                AccountState = (int)AccountState.AwatingApproval,
+                AccountState = (int)AccountStateDb.AwatingApproval,
                 IsAdmin = false
             };
         }

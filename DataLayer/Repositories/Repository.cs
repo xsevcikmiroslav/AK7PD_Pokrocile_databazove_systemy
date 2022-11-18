@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace DataLayer.Repositories
 {
-    public enum DbFindType
+    public enum FindTypeDb
     {
         AND,
         OR

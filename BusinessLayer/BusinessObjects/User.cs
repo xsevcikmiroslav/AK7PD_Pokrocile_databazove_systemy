@@ -1,5 +1,13 @@
 ﻿namespace BusinessLayer.BusinessObjects
 {
+    public enum AccountState
+    {
+        AwatingApproval = 1,
+        Active,
+        Banned,
+        Deleted
+    }
+
     public class User : BaseBusinessObject
     {
         public const int MAX_NUMBER_OF_BORROWED_BOOKS = 6;
@@ -14,11 +22,13 @@
 
         public string Username { get; set; } = string.Empty;
 
+        public string Password { get; set; } = string.Empty;
+
         public byte[] Salt { get; set; } = Array.Empty<byte>();
 
         public byte[] Hash { get; set; } = Array.Empty<byte>();
 
-        public int AccountState { get; set; }
+        public AccountState AccountState { get; set; }
 
         public bool IsAdmin { get; set; }
 

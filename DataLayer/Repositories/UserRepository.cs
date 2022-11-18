@@ -14,7 +14,7 @@ namespace DataLayer.Repositories
         public UserRepository(string connectionString)
             : base(connectionString, "User") { }
 
-        public IEnumerable<UserDto> Find(DbFindType findType, string firstname, string surname, string address, string pin, string sortBy)
+        public IEnumerable<UserDto> Find(FindTypeDb findType, string firstname, string surname, string address, string pin, string sortBy)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
@@ -50,7 +50,7 @@ namespace DataLayer.Repositories
             }
 
             var filter =
-                findType == DbFindType.AND
+                findType == FindTypeDb.AND
                 ? filterBuilder.And(filters)
                 : filterBuilder.Or(filters);
 

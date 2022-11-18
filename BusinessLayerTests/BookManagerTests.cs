@@ -23,6 +23,7 @@ namespace BusinessLayerTests
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
+            Assert.AreEqual("Book Manager Test Insert", newBook.Title);
         }
 
         private Book GetBookEntity()

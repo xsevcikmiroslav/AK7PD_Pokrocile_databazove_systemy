@@ -31,7 +31,7 @@ namespace DataLayerTest
                 Username = "Insertusername",
                 Salt = Encoding.UTF8.GetBytes("XIn+Dt7BHfDZtaeZF1cUY8A8yeaBPpQjpBEI0xBX5GEu+Y/wiDa9QhZdo61apD2Jujp72IXLQ3nnlBNN03GOZg=="),
                 Hash = Encoding.UTF8.GetBytes("XIn+Dt7BHfDZtaeZF1cUY8A8yeaBPpQjpBEI0xBX5GEu+Y/wiDa9QhZdo61apD2Jujp72IXLQ3nnlBNN03GOZg=="),
-                AccountState = (int)AccountState.AwatingApproval,
+                AccountState = (int)AccountStateDb.AwatingApproval,
                 IsAdmin = false
             };
         }
@@ -42,7 +42,7 @@ namespace DataLayerTest
             var entity = GetEntity();
             repository.Add(entity);
 
-            var result = ((IUserRepository)repository).Find(DbFindType.AND, string.Empty, string.Empty, "Krizkovskeho", string.Empty, null);
+            var result = ((IUserRepository)repository).Find(FindTypeDb.AND, string.Empty, string.Empty, "Krizkovskeho", string.Empty, null);
 
             Assert.IsTrue(result.Any());
         }
@@ -53,7 +53,7 @@ namespace DataLayerTest
             var entity = GetEntity();
             repository.Add(entity);
 
-            var result = ((IUserRepository)repository).Find(DbFindType.AND, "first", "Surname", "Blan", "0101010008", null);
+            var result = ((IUserRepository)repository).Find(FindTypeDb.AND, "first", "Surname", "Blan", "0101010008", null);
 
             Assert.IsTrue(result.Any());
         }
@@ -64,14 +64,14 @@ namespace DataLayerTest
             var entity = GetEntity();
             repository.Add(entity);
 
-            var result = ((IUserRepository)repository).Find(DbFindType.OR, "first", "Surname", "Blan", "0101010008", null);
+            var result = ((IUserRepository)repository).Find(FindTypeDb.OR, "first", "Surname", "Blan", "0101010008", null);
 
             Assert.IsTrue(result.Any());
         }
 
         protected override void updateEntity(UserDto entity)
         {
-            entity.AccountState = (int)AccountState.Banned;
+            entity.AccountState = (int)AccountStateDb.Banned;
             entity.Firstname = "Updatefirstname";
             entity.Address = new AddressDto
             {
@@ -85,7 +85,7 @@ namespace DataLayerTest
 
         protected override void assertAfterUpdate(UserDto entity)
         {
-            Assert.AreEqual((int)AccountState.Banned, entity.AccountState);
+            Assert.AreEqual((int)AccountStateDb.Banned, entity.AccountState);
             Assert.AreEqual("Updatefirstname", entity.Firstname);
             Assert.AreEqual("Uzka", entity.Address.Street);
             Assert.AreEqual("488", entity.Address.DescriptiveNumber);

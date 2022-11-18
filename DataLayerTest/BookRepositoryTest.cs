@@ -31,7 +31,7 @@ namespace DataLayerTest
             var book = GetEntity();
             repository.Add(book);
 
-            var result = ((IBookRepository)repository).Find(DbFindType.AND, string.Empty, "Ins", 0, null);
+            var result = ((IBookRepository)repository).Find(FindTypeDb.AND, string.Empty, "Ins", 0, null);
 
             Assert.IsTrue(result.Any());
         }

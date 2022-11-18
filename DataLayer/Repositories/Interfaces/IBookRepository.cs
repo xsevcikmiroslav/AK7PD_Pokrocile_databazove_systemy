@@ -4,6 +4,6 @@ namespace DataLayer.Repositories.Interfaces
 {
     public interface IBookRepository : IRepository<BookDto>
     {
-        IEnumerable<BookDto> Find(DbFindType findType, string title, string author, int yearOfPublication, string sortBy);
+        IEnumerable<BookDto> Find(FindTypeDb findType, string title, string author, int yearOfPublication, string sortBy);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLayer.BusinessObjects;
 using BusinessLayer.Managers.Interfaces;
+using DataLayer.DTO;
 using DataLayer.Repositories.Interfaces;
 
 namespace BusinessLayer.Managers
@@ -21,22 +22,24 @@ namespace BusinessLayer.Managers
             _userRepository = UserRepository;
         }
 
-        public User ApproveUser(User UserId)
+        public User ApproveUser(User userId)
         {
             throw new NotImplementedException();
         }
 
-        public User BanUser(User UserId)
+        public User BanUser(User userId)
         {
             throw new NotImplementedException();
         }
 
-        public User CreateUser(User User)
+        public User CreateUser(User user)
         {
-            throw new NotImplementedException();
+            var userDto = _mapper.Map<UserDto>(user);
+            _userRepository.Add(userDto);
+            return _mapper.Map<User>(userDto);
         }
 
-        public void DeleteUser(User UserId)
+        public void DeleteUser(User userId)
         {
             throw new NotImplementedException();
         }
@@ -51,7 +54,7 @@ namespace BusinessLayer.Managers
             throw new NotImplementedException();
         }
 
-        public User GetUser(string UserId)
+        public User GetUser(string userId)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +64,7 @@ namespace BusinessLayer.Managers
             throw new NotImplementedException();
         }
 
-        public User UpdateUser(User UserId)
+        public User UpdateUser(User userId)
         {
             throw new NotImplementedException();
         }

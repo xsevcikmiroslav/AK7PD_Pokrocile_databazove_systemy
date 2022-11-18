@@ -71,7 +71,7 @@ namespace BusinessLayer.Managers
 
         public IEnumerable<Book> FindBooks(FindType findType, string title, string author, int yearOfPublication, string sortBy)
         {
-            var dbFindType = _mapper.Map<DbFindType>(findType);
+            var dbFindType = _mapper.Map<FindTypeDb>(findType);
 
             return
                 _bookRepository
