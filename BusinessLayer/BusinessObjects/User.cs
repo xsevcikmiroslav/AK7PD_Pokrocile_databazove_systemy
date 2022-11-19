@@ -22,16 +22,10 @@
 
         public string Username { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
-
-        public byte[] Salt { get; set; } = Array.Empty<byte>();
-
-        public byte[] Hash { get; set; } = Array.Empty<byte>();
-
         public AccountState AccountState { get; set; }
 
         public bool IsAdmin { get; set; }
 
-        //public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
+        public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
     }
 }

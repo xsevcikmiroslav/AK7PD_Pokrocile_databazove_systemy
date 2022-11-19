@@ -32,7 +32,6 @@ namespace BusinessLayerTests
             {
                 Author = "Test Insert",
                 Title = "Book Manager Test Insert",
-                NumberOfBorrowed = 0,
                 NumberOfLicences = 5,
                 NumberOfPages = 350,
                 YearOfPublication = 1988
@@ -43,23 +42,25 @@ namespace BusinessLayerTests
         public void BookManager_BorrowAndThenReturnBook_Success()
         {
             var newBook = GetBookEntity();
+            newBook.NumberOfLicences = 1;
             newBook = _bookManager.CreateBook(newBook);
             Assert.IsFalse(string.IsNullOrEmpty(newBook._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
+            Assert.IsTrue(newBook.CanBeBorrowed);
 
             _bookManager.BorrowBook(newBook._id, "876543218765432187654321");
 
             var book = _bookManager.GetBook(newBook._id);
 
             Assert.IsNotNull(book);
-            Assert.AreEqual(1, book.NumberOfBorrowed);
+            Assert.IsFalse(book.CanBeBorrowed);
 
             _bookManager.ReturnBook(newBook._id, "876543218765432187654321");
 
             book = _bookManager.GetBook(newBook._id);
 
             Assert.IsNotNull(book);
-            Assert.AreEqual(0, book.NumberOfBorrowed);
+            Assert.IsTrue(newBook.CanBeBorrowed);
         }
 
         [TestMethod]
@@ -92,7 +93,7 @@ namespace BusinessLayerTests
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             }
 
-            var books = _bookManager.FindBooks(FindType.AND, "Insert 2", string.Empty, 1990, string.Empty);
+            var books = _bookManager.Find(FindType.AND, "Insert 2", string.Empty, 1990, string.Empty);
 
             Assert.IsNotNull(books);
             Assert.AreEqual(1, books.Count());
@@ -113,7 +114,7 @@ namespace BusinessLayerTests
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             }
 
-            var books = _bookManager.FindBooks(FindType.AND, "NonExisting", string.Empty, 2100, string.Empty);
+            var books = _bookManager.Find(FindType.AND, "NonExisting", string.Empty, 2100, string.Empty);
 
             Assert.IsNotNull(books);
             Assert.AreEqual(0, books.Count());
@@ -133,7 +134,7 @@ namespace BusinessLayerTests
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             }
 
-            var books = _bookManager.FindBooks(FindType.OR, "Insert 2", string.Empty, 1992, string.Empty);
+            var books = _bookManager.Find(FindType.OR, "Insert 2", string.Empty, 1992, string.Empty);
 
             Assert.IsNotNull(books);
             Assert.AreEqual(2, books.Count());

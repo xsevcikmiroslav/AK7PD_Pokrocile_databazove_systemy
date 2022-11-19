@@ -4,22 +4,24 @@ namespace BusinessLayer.Managers.Interfaces
 {
     public interface IUserManager
     {
-        User ApproveUser(User userId);
+        User ApproveUser(string userId);
 
-        User BanUser(User userId);
+        User BanUser(string userId);
 
         User CreateUser(User user);
 
-        void DeleteUser(User userId);
+        void DeleteUser(string userId);
 
         void DeleteAllUsers();
 
-        IEnumerable<User> Find(FindType findType, string firstname, string surname, string address, string pin, string sortBy);
+        IEnumerable<User> Find(FindType findType, string username, string firstname, string surname, string address, string pin, string sortBy);
 
         User GetUser(string userId);
 
         bool LoginUser(string username, string password);
 
-        User UpdateUser(User userId);
+        void SetPassword(string userId, string password);
+
+        User UpdateUser(string userId);
     }
 }

@@ -16,9 +16,14 @@ namespace DataLayer.Repositories
 
         public IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId)
         {
+            return GetBorrowingsHistory("UserId", userId);
+        }
+
+        private IEnumerable<BorrowingDto> GetBorrowingsHistory(string foreignIdName, string foreignIdValue)
+        {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
-            var filter = filterBuilder.Eq("UserId", ObjectId.Parse(userId));
+            var filter = filterBuilder.Eq(foreignIdName, ObjectId.Parse(foreignIdValue));
 
             var entities = _mongoCollection.Find(filter).ToEnumerable();
             foreach (var entity in entities)
@@ -29,10 +34,15 @@ namespace DataLayer.Repositories
 
         public IEnumerable<BorrowingDto> GetUsersCurrentBorrowings(string userId)
         {
+            return GetCurrentBorrowings("UserId", userId);
+        }
+
+        private IEnumerable<BorrowingDto> GetCurrentBorrowings(string foreignIdName, string foreignIdValue)
+        {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
             var filters = new FilterDefinition<BsonDocument>[] {
-                filterBuilder.Eq("UserId", ObjectId.Parse(userId)),
+                filterBuilder.Eq(foreignIdName, ObjectId.Parse(foreignIdValue)),
                 filterBuilder.Eq("DateTimeReturned", DateTime.MinValue),
                 filterBuilder.Gt("DateTimeBorrowed", DateTime.MinValue)
             };
@@ -59,6 +69,16 @@ namespace DataLayer.Repositories
 
             var entity = _mongoCollection.Find(filter).FirstOrDefault();
             return MapBsonToDto(entity);
+        }
+
+        public IEnumerable<BorrowingDto> GetBookBorrowingsHistory(string bookId)
+        {
+            return GetBorrowingsHistory("BookId", bookId);
+        }
+
+        public IEnumerable<BorrowingDto> GetBookCurrentBorrowings(string bookId)
+        {
+            return GetCurrentBorrowings("BookId", bookId);
         }
     }
 }

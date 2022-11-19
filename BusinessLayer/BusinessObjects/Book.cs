@@ -12,11 +12,9 @@
 
         public int NumberOfLicences { get; set; }
 
-        public int NumberOfBorrowed { get; set; }
-
-        //public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
+        public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
 
         public bool CanBeBorrowed
-            => NumberOfLicences > NumberOfBorrowed;
+            => NumberOfLicences > Borrowings.Count();
     }
 }

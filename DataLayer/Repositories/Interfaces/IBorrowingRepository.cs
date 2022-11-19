@@ -9,5 +9,9 @@ namespace DataLayer.Repositories.Interfaces
         IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId);
 
         IEnumerable<BorrowingDto> GetUsersCurrentBorrowings(string userId);
+
+        IEnumerable<BorrowingDto> GetBookBorrowingsHistory(string bookId);
+
+        IEnumerable<BorrowingDto> GetBookCurrentBorrowings(string bookId);
     }
 }

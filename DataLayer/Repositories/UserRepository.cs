@@ -14,11 +14,15 @@ namespace DataLayer.Repositories
         public UserRepository(string connectionString)
             : base(connectionString, "User") { }
 
-        public IEnumerable<UserDto> Find(FindTypeDb findType, string firstname, string surname, string address, string pin, string sortBy)
+        public IEnumerable<UserDto> Find(FindTypeDb findType, string username, string firstname, string surname, string address, string pin, string sortBy)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
             var filters = new List<FilterDefinition<BsonDocument>>();
+            if (!string.IsNullOrEmpty(username) && username.Length >= 3)
+            {
+                filters.Add(filterBuilder.Regex("Username", $".*{username}.*"));
+            }
             if (!string.IsNullOrEmpty(firstname) && firstname.Length >= 3)
             {
                 filters.Add(filterBuilder.Regex("Firstname", $".*{firstname}.*"));

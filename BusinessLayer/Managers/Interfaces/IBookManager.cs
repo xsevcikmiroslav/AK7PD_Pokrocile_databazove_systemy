@@ -12,7 +12,7 @@ namespace BusinessLayer.Managers.Interfaces
 
         void DeleteAllBooks();
 
-        IEnumerable<Book> FindBooks(FindType findType, string title, string author, int yearOfPublication, string sortBy);
+        IEnumerable<Book> Find(FindType findType, string title, string author, int yearOfPublication, string sortBy);
 
         Book GetBook(string bookId);
 

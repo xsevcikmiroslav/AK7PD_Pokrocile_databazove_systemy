@@ -2,6 +2,7 @@
 using BusinessLayer.BusinessObjects;
 using BusinessLayer.Managers.Interfaces;
 using DataLayer.DTO;
+using DataLayer.Repositories;
 using DataLayer.Repositories.Interfaces;
 
 namespace BusinessLayer.Managers
@@ -22,14 +23,20 @@ namespace BusinessLayer.Managers
             _userRepository = UserRepository;
         }
 
-        public User ApproveUser(User userId)
+        public User ApproveUser(string userId)
         {
-            throw new NotImplementedException();
+            var userDto = _userRepository.Get(userId);
+            userDto.AccountState = (int)AccountStateDb.Active;
+            _userRepository.Update(userDto);
+            return _mapper.Map<User>(userDto);
         }
 
-        public User BanUser(User userId)
+        public User BanUser(string userId)
         {
-            throw new NotImplementedException();
+            var userDto = _userRepository.Get(userId);
+            userDto.AccountState = (int)AccountStateDb.Banned;
+            _userRepository.Update(userDto);
+            return _mapper.Map<User>(userDto);
         }
 
         public User CreateUser(User user)
@@ -39,24 +46,39 @@ namespace BusinessLayer.Managers
             return _mapper.Map<User>(userDto);
         }
 
-        public void DeleteUser(User userId)
+        public void DeleteUser(string userId)
         {
-            throw new NotImplementedException();
+            var user = GetUser(userId);
+            foreach (var borrowing in user.Borrowings)
+            {
+                _borrowingRepository.Delete(borrowing._id);
+            }
+            _userRepository.Delete(userId);
         }
 
         public void DeleteAllUsers()
         {
-            throw new NotImplementedException();
+            _borrowingRepository.DeleteAll();
+            _userRepository.DeleteAll();
         }
 
-        public IEnumerable<User> Find(FindType findType, string firstname, string surname, string address, string pin, string sortBy)
+        public IEnumerable<User> Find(FindType findType, string username, string firstname, string surname, string address, string pin, string sortBy)
         {
-            throw new NotImplementedException();
+            var dbFindType = _mapper.Map<FindTypeDb>(findType);
+
+            return
+                _userRepository
+                .Find(dbFindType, username, firstname, surname, address, pin, sortBy)
+                .Select(b => _mapper.Map<User>(b));
         }
 
         public User GetUser(string userId)
         {
-            throw new NotImplementedException();
+            var userDto = _userRepository.Get(userId);
+            var user = _mapper.Map<User>(userDto);
+            var borrowingsDto = _borrowingRepository.GetUsersCurrentBorrowings(user._id);
+            user.Borrowings = borrowingsDto.Select(b => _mapper.Map<Borrowing>(b));
+            return user;
         }
 
         public bool LoginUser(string username, string password)
@@ -64,7 +86,12 @@ namespace BusinessLayer.Managers
             throw new NotImplementedException();
         }
 
-        public User UpdateUser(User userId)
+        public void SetPassword(string userId, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User UpdateUser(string userId)
         {
             throw new NotImplementedException();
         }

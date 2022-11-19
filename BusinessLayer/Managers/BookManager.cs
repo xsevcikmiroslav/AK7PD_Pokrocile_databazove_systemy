@@ -39,10 +39,6 @@ namespace BusinessLayer.Managers
 
             _borrowingRepository.Add(_mapper.Map<BorrowingDto>(borrowing));
 
-            var book = _bookRepository.Get(bookId);
-            book.NumberOfBorrowed++;
-            _bookRepository.Update(book);
-
             return true;
         }
 
@@ -60,6 +56,11 @@ namespace BusinessLayer.Managers
 
         public void DeleteBook(string bookId)
         {
+            var book = GetBook(bookId);
+            foreach (var borrowing in book.Borrowings)
+            {
+                _borrowingRepository.Delete(borrowing._id);
+            }
             _bookRepository.Delete(bookId);
         }
 
@@ -69,7 +70,7 @@ namespace BusinessLayer.Managers
             _bookRepository.DeleteAll();
         }
 
-        public IEnumerable<Book> FindBooks(FindType findType, string title, string author, int yearOfPublication, string sortBy)
+        public IEnumerable<Book> Find(FindType findType, string title, string author, int yearOfPublication, string sortBy)
         {
             var dbFindType = _mapper.Map<FindTypeDb>(findType);
 
@@ -81,8 +82,11 @@ namespace BusinessLayer.Managers
 
         public Book GetBook(string bookId)
         {
-            var entity = _bookRepository.Get(bookId);
-            return _mapper.Map<Book>(entity);
+            var bookDto = _bookRepository.Get(bookId);
+            var book = _mapper.Map<Book>(bookDto);
+            var borrowingsDto = _borrowingRepository.GetBookCurrentBorrowings(book._id);
+            book.Borrowings = borrowingsDto.Select(b => _mapper.Map<Borrowing>(b));
+            return book;
         }
 
         public IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string userId)
@@ -114,10 +118,6 @@ namespace BusinessLayer.Managers
             var borrowing = _borrowingRepository.GetByUserAndBook(userId, bookId);
             borrowing.DateTimeReturned = DateTime.Now;
             _borrowingRepository.Update(borrowing);
-
-            var book = _bookRepository.Get(bookId);
-            book.NumberOfBorrowed--;
-            _bookRepository.Update(book);
         }
 
         public Book UpdateBook(Book book)

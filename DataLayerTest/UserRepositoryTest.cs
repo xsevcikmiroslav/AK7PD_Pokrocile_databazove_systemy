@@ -42,7 +42,7 @@ namespace DataLayerTest
             var entity = GetEntity();
             repository.Add(entity);
 
-            var result = ((IUserRepository)repository).Find(FindTypeDb.AND, string.Empty, string.Empty, "Krizkovskeho", string.Empty, null);
+            var result = ((IUserRepository)repository).Find(FindTypeDb.AND, string.Empty, string.Empty, string.Empty, "Krizkovskeho", string.Empty, null);
 
             Assert.IsTrue(result.Any());
         }
@@ -53,7 +53,7 @@ namespace DataLayerTest
             var entity = GetEntity();
             repository.Add(entity);
 
-            var result = ((IUserRepository)repository).Find(FindTypeDb.AND, "first", "Surname", "Blan", "0101010008", null);
+            var result = ((IUserRepository)repository).Find(FindTypeDb.AND, string.Empty, "first", "Surname", "Blan", "0101010008", null);
 
             Assert.IsTrue(result.Any());
         }
@@ -64,7 +64,7 @@ namespace DataLayerTest
             var entity = GetEntity();
             repository.Add(entity);
 
-            var result = ((IUserRepository)repository).Find(FindTypeDb.OR, "first", "Surname", "Blan", "0101010008", null);
+            var result = ((IUserRepository)repository).Find(FindTypeDb.OR, string.Empty, "first", "Surname", "Blan", "0101010008", null);
 
             Assert.IsTrue(result.Any());
         }
