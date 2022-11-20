@@ -18,8 +18,6 @@ namespace OnlineLibrary.Controllers
 
         public IActionResult Index()
         {
-            _bookManager.BorrowBook("123", "456");
-
             return View();
         }
 

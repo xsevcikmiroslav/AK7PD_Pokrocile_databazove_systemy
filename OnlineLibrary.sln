@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayerTest", "DataLayerT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{E6892610-12F9-44B6-A086-7A736DA2BDCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayerTests", "BusinessLayerTests\BusinessLayerTests.csproj", "{63DBD07F-7BA6-4E69-AFEF-75B1B35339C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayerTests", "BusinessLayerTests\BusinessLayerTests.csproj", "{63DBD07F-7BA6-4E69-AFEF-75B1B35339C0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineLibraryWinForms", "OnlineLibraryWinForms\OnlineLibraryWinForms.csproj", "{285665A2-6558-4AAB-9BF7-3D07AF7E47E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{63DBD07F-7BA6-4E69-AFEF-75B1B35339C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63DBD07F-7BA6-4E69-AFEF-75B1B35339C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63DBD07F-7BA6-4E69-AFEF-75B1B35339C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{285665A2-6558-4AAB-9BF7-3D07AF7E47E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{285665A2-6558-4AAB-9BF7-3D07AF7E47E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{285665A2-6558-4AAB-9BF7-3D07AF7E47E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{285665A2-6558-4AAB-9BF7-3D07AF7E47E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
