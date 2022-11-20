@@ -16,5 +16,12 @@
 
         public bool CanBeBorrowed
             => NumberOfLicences > Borrowings.Count();
+
+        public override bool IsValid =>
+            !string.IsNullOrEmpty(Title)
+            && !string.IsNullOrEmpty(Author)
+            && NumberOfPages > 0
+            && YearOfPublication > 0
+            && NumberOfLicences > 0;
     }
 }

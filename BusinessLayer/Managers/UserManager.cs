@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLayer.BusinessObjects;
 using BusinessLayer.Managers.Interfaces;
+using BusinessLayer.Password;
 using DataLayer.DTO;
 using DataLayer.Repositories;
 using DataLayer.Repositories.Interfaces;
@@ -42,6 +43,9 @@ namespace BusinessLayer.Managers
         public User CreateUser(User user)
         {
             var userDto = _mapper.Map<UserDto>(user);
+            var password = PasswordHelper.HashNewPassword(user.Password);
+            userDto.Salt = password.Item1;
+            userDto.Hash = password.Item2;
             _userRepository.Add(userDto);
             return _mapper.Map<User>(userDto);
         }
@@ -81,19 +85,47 @@ namespace BusinessLayer.Managers
             return user;
         }
 
-        public bool LoginUser(string username, string password)
+        public User LoginUser(string username, string password)
         {
-            throw new NotImplementedException();
+            var userDto = _userRepository.GetByUserName(username);
+            var user = _mapper.Map<User>(userDto);
+
+            if (!user.IsValid)
+            {
+                return new User();
+            }
+
+            var passwordHash = PasswordHelper.HashPassword(userDto.Salt, password);
+
+            if (!passwordHash.SequenceEqual(userDto.Hash))
+            {
+                return new User();
+            }
+
+            ApplicationState.ActiveUser = user;
+            return user;
+        }
+
+        public void LogoutUser()
+        {
+            ApplicationState.ActiveUser = new User();
         }
 
         public void SetPassword(string userId, string password)
         {
-            throw new NotImplementedException();
+            var user = GetUser(userId);
+            var userDto = _mapper.Map<UserDto>(user);
+            var passwordHash = PasswordHelper.HashNewPassword(password);
+            userDto.Salt = passwordHash.Item1;
+            userDto.Hash = passwordHash.Item2;
+            _userRepository.Update(userDto);
         }
 
-        public User UpdateUser(string userId)
+        public User UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            var updateEntity = _mapper.Map<UserDto>(user);
+            _userRepository.Update(updateEntity);
+            return _mapper.Map<User>(updateEntity);
         }
     }
 }

@@ -22,10 +22,22 @@
 
         public string Username { get; set; } = string.Empty;
 
+        public string Password { get; set; } = string.Empty;
+
         public AccountState AccountState { get; set; }
 
         public bool IsAdmin { get; set; }
 
         public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
+
+        public bool CanBorrowAnotherBook => MAX_NUMBER_OF_BORROWED_BOOKS < Borrowings.Count();
+
+        public override bool IsValid =>
+            !string.IsNullOrEmpty(Firstname)
+            && !string.IsNullOrEmpty(Surname)
+            && !string.IsNullOrEmpty(Pin)
+            && Pin.All(c => char.IsDigit(c))
+            && !string.IsNullOrEmpty(Username)
+            && Address.IsValid;
     }
 }

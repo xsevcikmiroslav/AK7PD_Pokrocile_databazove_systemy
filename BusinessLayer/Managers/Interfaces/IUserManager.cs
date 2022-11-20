@@ -18,10 +18,12 @@ namespace BusinessLayer.Managers.Interfaces
 
         User GetUser(string userId);
 
-        bool LoginUser(string username, string password);
+        User LoginUser(string username, string password);
 
         void SetPassword(string userId, string password);
 
-        User UpdateUser(string userId);
+        void LogoutUser();
+
+        User UpdateUser(User user);
     }
 }

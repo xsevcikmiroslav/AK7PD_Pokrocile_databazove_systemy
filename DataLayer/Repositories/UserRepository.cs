@@ -71,5 +71,12 @@ namespace DataLayer.Repositories
                 yield return BsonSerializer.Deserialize<UserDto>(result);
             }
         }
+
+        public UserDto GetByUserName(string username)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("Username", username);
+            var entity = _mongoCollection.Find(filter).FirstOrDefault();
+            return MapBsonToDto(entity);
+        }
     }
 }

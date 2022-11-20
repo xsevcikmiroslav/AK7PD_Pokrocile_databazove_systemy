@@ -18,7 +18,7 @@ namespace DataLayer.Repositories
         protected static IMongoCollection<BsonDocument> _mongoCollection;
 
         public Repository(string collectionName)
-            : this ("mongodb+srv://MirSevMongo:thoHOQXpmkU7m7kx@cluster0.08jipe7.mongodb.net/?retryWrites=true&w=majority", collectionName)
+            : this ("mongodb://localhost:27017"/*"mongodb+srv://MirSevMongo:thoHOQXpmkU7m7kx@cluster0.08jipe7.mongodb.net/?retryWrites=true&w=majority"*/, collectionName)
         { }
 
         public Repository(string connectionString, string collectionName)

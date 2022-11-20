@@ -42,7 +42,8 @@ namespace BusinessLayerTests
                 Firstname = "Miroslav",
                 Pin = "0101010008",
                 Surname = "Sevcik",
-                Username = "MirSev"
+                Username = "MirSev",
+                Password = "Pa55w0RdO12EAS"
             };
         }
 
@@ -178,6 +179,39 @@ namespace BusinessLayerTests
             Assert.AreEqual(2, users.Count());
             Assert.IsTrue(users.Any(b => b.Username.Equals("MirSev1")));
             Assert.IsTrue(users.Any(b => b.Address.DescriptiveNumber.Equals("11242")));
+        }
+
+        [TestMethod]
+        public void UserManager_CreateUserAndTryLoginWithValidCredentials_Success()
+        {
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(newUser);
+            Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
+            Assert.AreEqual("MirSev", newUser.Username);
+
+            var loggedUser = _userManager.LoginUser("MirSev", "Pa55w0RdO12EAS");
+
+            Assert.IsFalse(string.IsNullOrEmpty(loggedUser._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), loggedUser._id);
+            Assert.AreEqual("MirSev", loggedUser.Username);
+            Assert.IsTrue(loggedUser.IsValid);
+        }
+
+        [TestMethod]
+        public void UserManager_CreateUserAndTryLoginWithInvalidCredentials_Success()
+        {
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(newUser);
+            Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
+            Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
+            Assert.AreEqual("MirSev", newUser.Username);
+
+            var loggedUser = _userManager.LoginUser("MirSev", "Hacker01");
+
+            Assert.IsTrue(string.IsNullOrEmpty(loggedUser._id));
+            Assert.AreEqual(string.Empty, loggedUser.Username);
+            Assert.IsFalse(loggedUser.IsValid);
         }
 
         [TestCleanup]

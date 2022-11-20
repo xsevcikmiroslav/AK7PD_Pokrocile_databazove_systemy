@@ -93,5 +93,19 @@ namespace DataLayerTest
             Assert.AreEqual("Brno", entity.Address.City);
             Assert.AreEqual("60200", entity.Address.Zip);
         }
+
+        [TestMethod]
+        public void Repository_GetByUserName_Success()
+        {
+            var entity = GetEntity();
+            repository.Add(entity);
+
+            var returnedEntity = ((IUserRepository)repository).GetByUserName(entity.Username);
+
+            foreach (var prop in returnedEntity.GetType().GetProperties().Where(p => !new string[] { "_id", "Salt", "Hash", "Address", "DateTimeCreated" }.Contains(p.Name)))
+            {
+                Assert.AreEqual(prop.GetValue(entity, null), prop.GetValue(returnedEntity, null));
+            }
+        }
     }
 }
