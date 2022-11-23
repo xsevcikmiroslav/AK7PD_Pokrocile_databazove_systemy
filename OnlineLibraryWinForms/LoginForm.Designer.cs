@@ -1,6 +1,6 @@
 ﻿namespace OnlineLibraryWinForms
 {
-    partial class MainWindow
+    partial class LoginForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -34,6 +34,7 @@
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.btnLogin = new System.Windows.Forms.Button();
             this.btnCreateAccount = new System.Windows.Forms.Button();
+            this.lblInvalidCredentials = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblUsername
@@ -74,8 +75,10 @@
             this.tbPassword.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.tbPassword.Location = new System.Drawing.Point(116, 53);
             this.tbPassword.Name = "tbPassword";
+            this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(153, 29);
             this.tbPassword.TabIndex = 3;
+            this.tbPassword.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbPassword_KeyDown);
             // 
             // btnLogin
             // 
@@ -85,6 +88,7 @@
             this.btnLogin.TabIndex = 4;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
             // btnCreateAccount
             // 
@@ -94,22 +98,36 @@
             this.btnCreateAccount.TabIndex = 5;
             this.btnCreateAccount.Text = "Create Account";
             this.btnCreateAccount.UseVisualStyleBackColor = true;
+            this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
-            // MainWindow
+            // lblInvalidCredentials
+            // 
+            this.lblInvalidCredentials.AutoSize = true;
+            this.lblInvalidCredentials.ForeColor = System.Drawing.Color.Red;
+            this.lblInvalidCredentials.Location = new System.Drawing.Point(116, 149);
+            this.lblInvalidCredentials.Name = "lblInvalidCredentials";
+            this.lblInvalidCredentials.Size = new System.Drawing.Size(164, 15);
+            this.lblInvalidCredentials.TabIndex = 6;
+            this.lblInvalidCredentials.Text = "Invalid username or password";
+            this.lblInvalidCredentials.Visible = false;
+            // 
+            // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(304, 181);
+            this.Controls.Add(this.lblInvalidCredentials);
             this.Controls.Add(this.btnCreateAccount);
             this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.tbPassword);
             this.Controls.Add(this.tbUsername);
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblUsername);
-            this.Name = "MainWindow";
-            this.Text = "Online Library Client";
+            this.Name = "LoginForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Online Library Client Login";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -123,5 +141,6 @@
         private TextBox tbPassword;
         private Button btnLogin;
         private Button btnCreateAccount;
+        private Label lblInvalidCredentials;
     }
 }

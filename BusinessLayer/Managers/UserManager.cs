@@ -102,13 +102,7 @@ namespace BusinessLayer.Managers
                 return new User();
             }
 
-            ApplicationState.ActiveUser = user;
             return user;
-        }
-
-        public void LogoutUser()
-        {
-            ApplicationState.ActiveUser = new User();
         }
 
         public void SetPassword(string userId, string password)
@@ -121,9 +115,13 @@ namespace BusinessLayer.Managers
             _userRepository.Update(userDto);
         }
 
-        public User UpdateUser(User user)
+        public User UpdateUser(User updatedBy, User userToUpdate)
         {
-            var updateEntity = _mapper.Map<UserDto>(user);
+            if (!updatedBy.IsAdmin)
+            {
+                userToUpdate.AccountState = AccountState.AwatingApproval;
+            }
+            var updateEntity = _mapper.Map<UserDto>(userToUpdate);
             _userRepository.Update(updateEntity);
             return _mapper.Map<User>(updateEntity);
         }

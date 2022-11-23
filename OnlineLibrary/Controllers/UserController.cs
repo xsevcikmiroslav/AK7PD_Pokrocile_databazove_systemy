@@ -24,7 +24,7 @@ namespace OnlineLibrary.Controllers
         [HttpPost]
         public IActionResult EditUser(BusinessLayer.BusinessObjects.User user)
         {
-            _userManager.UpdateUser(user);
+            //_userManager.UpdateUser(user);
 
             return View(user);
         }

@@ -22,8 +22,6 @@ namespace BusinessLayer.Managers.Interfaces
 
         void SetPassword(string userId, string password);
 
-        void LogoutUser();
-
-        User UpdateUser(User user);
+        User UpdateUser(User updatedBy, User userToUpdate);
     }
 }
