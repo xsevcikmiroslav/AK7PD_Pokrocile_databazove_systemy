@@ -1,39 +1,33 @@
-﻿using AutoMapper;
-using BusinessLayer.BusinessObjects;
+﻿using BusinessLayer.BusinessObjects;
 using BusinessLayer.Managers.Interfaces;
-using DataLayer.DTO;
 using DataLayer.Repositories.Interfaces;
 
 namespace BusinessLayer.Managers
 {
     public class AdminManager : IAdminManager
     {
-        private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
 
         public AdminManager(
-            IMapper mapper,
-            IBorrowingRepository BorrowingRepository,
             IUserRepository UserRepository)
         {
-            _mapper = mapper;
             _userRepository = UserRepository;
         }
 
         public User ApproveUser(string userId)
         {
             var userDto = _userRepository.Get(userId);
-            userDto.AccountState = (int)AccountStateDb.Active;
+            userDto.AccountState = (int)AccountState.Active;
             _userRepository.Update(userDto);
-            return _mapper.Map<User>(userDto);
+            return userDto.ToBo();
         }
 
         public User BanUser(string userId)
         {
             var userDto = _userRepository.Get(userId);
-            userDto.AccountState = (int)AccountStateDb.Banned;
+            userDto.AccountState = (int)AccountState.Banned;
             _userRepository.Update(userDto);
-            return _mapper.Map<User>(userDto);
+            return userDto.ToBo();
         }
     }
 }

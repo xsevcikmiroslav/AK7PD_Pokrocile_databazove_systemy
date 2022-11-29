@@ -162,9 +162,8 @@ namespace BusinessLayer.Managers
             {
                 userToUpdate.AccountState = AccountState.AwatingApproval;
             }
-            var updateEntity = userToUpdate.ToDto();
-            _userRepository.Update(updateEntity);
-            return updateEntity.ToBo();
+            _userRepository.Update(userToUpdate.ToDto());
+            return userToUpdate;
         }
     }
 }

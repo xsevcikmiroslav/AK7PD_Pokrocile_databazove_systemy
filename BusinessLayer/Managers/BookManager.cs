@@ -1,33 +1,27 @@
-﻿using AutoMapper;
-using BusinessLayer.BusinessObjects;
+﻿using BusinessLayer.BusinessObjects;
 using BusinessLayer.Managers.Interfaces;
-using DataLayer.DTO;
-using DataLayer.Repositories;
 using DataLayer.Repositories.Interfaces;
 
 namespace BusinessLayer.Managers
 {
     public class BookManager : IBookManager
     {
-        private readonly IMapper _mapper;
         private readonly IBookRepository _bookRepository;
         private readonly IBorrowingRepository _borrowingRepository;
 
         public BookManager(
-            IMapper mapper,
             IBookRepository bookRepository,
             IBorrowingRepository BorrowingRepository)
         {
-            _mapper = mapper;
             _bookRepository = bookRepository;
             _borrowingRepository = BorrowingRepository;
         }
 
         public Book CreateBook(Book book)
         {
-            var newEntity = _mapper.Map<BookDto>(book);
+            var newEntity = book.ToDto();
             _bookRepository.Add(newEntity);
-            return _mapper.Map<Book>(newEntity);
+            return newEntity.ToBo();
         }
 
         public void DeleteAllBooks()
@@ -48,28 +42,24 @@ namespace BusinessLayer.Managers
 
         public IEnumerable<Book> Find(FindType findType, string title, string author, int yearOfPublication, string sortBy)
         {
-            var dbFindType = _mapper.Map<FindTypeDb>(findType);
-
             return
                 _bookRepository
-                .Find(dbFindType, title, author, yearOfPublication, sortBy)
-                .Select(b => _mapper.Map<Book>(b));
+                .Find(findType.ToDto(), title, author, yearOfPublication, sortBy)
+                .Select(b => b.ToBo());
         }
 
         public Book GetBook(string bookId)
         {
-            var bookDto = _bookRepository.Get(bookId);
-            var book = _mapper.Map<Book>(bookDto);
+            var book = _bookRepository.Get(bookId).ToBo();
             var borrowingsDto = _borrowingRepository.GetBookCurrentBorrowings(book._id);
-            book.Borrowings = borrowingsDto.Select(b => _mapper.Map<Borrowing>(b));
+            book.Borrowings = borrowingsDto.Select(b => b.ToBo());
             return book;
         }
 
         public Book UpdateBook(Book book)
         {
-            var updateEntity = _mapper.Map<BookDto>(book);
-            _bookRepository.Update(updateEntity);
-            return _mapper.Map<Book>(updateEntity);
+            _bookRepository.Update(book.ToDto());
+            return book;
         }
     }
 }
