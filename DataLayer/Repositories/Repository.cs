@@ -34,12 +34,13 @@ namespace DataLayer.Repositories
             }
         }
 
-        public void Add(T entity)
+        public T Add(T entity)
         {
             var bsonDoc = entity.ToBsonDocument();
             bsonDoc["_id"] = ObjectId.Empty;
             _mongoCollection.InsertOne(bsonDoc);
             entity._id = bsonDoc["_id"].AsObjectId;
+            return entity;
         }
 
         public void Delete(string id)

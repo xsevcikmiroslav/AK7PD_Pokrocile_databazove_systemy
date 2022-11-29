@@ -1,53 +1,67 @@
-﻿using AutoMapper;
-using BusinessLayer.BusinessObjects;
+﻿using BusinessLayer.BusinessObjects;
 using BusinessLayer.Managers.Interfaces;
 using BusinessLayer.Password;
-using DataLayer.DTO;
-using DataLayer.Repositories;
 using DataLayer.Repositories.Interfaces;
 
 namespace BusinessLayer.Managers
 {
     public class UserManager : IUserManager
     {
-        private readonly IMapper _mapper;
+        private readonly IBookRepository _bookRepository;
         private readonly IBorrowingRepository _borrowingRepository;
         private readonly IUserRepository _userRepository;
 
         public UserManager(
-            IMapper mapper,
+            IBookRepository bookRepository,
             IBorrowingRepository BorrowingRepository,
             IUserRepository UserRepository)
         {
-            _mapper = mapper;
+            _bookRepository = bookRepository;
             _borrowingRepository = BorrowingRepository;
             _userRepository = UserRepository;
         }
 
-        public User ApproveUser(string userId)
+        public void BorrowBook(string userId, string bookId)
         {
-            var userDto = _userRepository.Get(userId);
-            userDto.AccountState = (int)AccountStateDb.Active;
-            _userRepository.Update(userDto);
-            return _mapper.Map<User>(userDto);
+            if (!UserCanBorrowBook(userId))
+            {
+                throw new Exception("User cannot borrow another book");
+            }
+
+            var book = _bookRepository.Get(bookId).ToBo();
+            if (!book.CanBeBorrowed)
+            {
+                throw new Exception("No free licence for this book");
+            }
+
+            var borrowing = new Borrowing
+            {
+                BookId = bookId,
+                UserId = userId,
+                DateTimeBorrowed = DateTime.Now,
+            };
+
+            _borrowingRepository.Add(borrowing.ToDto());
         }
 
-        public User BanUser(string userId)
+        private bool UserCanBorrowBook(string userId)
         {
-            var userDto = _userRepository.Get(userId);
-            userDto.AccountState = (int)AccountStateDb.Banned;
-            _userRepository.Update(userDto);
-            return _mapper.Map<User>(userDto);
+            return GetUsersCurrentlyBorrowedBooks(userId).Count() < User.MAX_NUMBER_OF_BORROWED_BOOKS;
         }
 
         public User CreateUser(User user)
         {
-            var userDto = _mapper.Map<UserDto>(user);
+            var existingUser = _userRepository.GetByUserName(user.Username).ToBo();
+            if (existingUser.IsValid)
+            {
+                throw new Exception("User already exists");
+            }
+
+            var userDto = user.ToDto();
             var password = PasswordHelper.HashNewPassword(user.Password);
             userDto.Salt = password.Item1;
             userDto.Hash = password.Item2;
-            _userRepository.Add(userDto);
-            return _mapper.Map<User>(userDto);
+            return _userRepository.Add(userDto).ToBo();
         }
 
         public void DeleteUser(string userId)
@@ -68,27 +82,48 @@ namespace BusinessLayer.Managers
 
         public IEnumerable<User> Find(FindType findType, string username, string firstname, string surname, string address, string pin, string sortBy)
         {
-            var dbFindType = _mapper.Map<FindTypeDb>(findType);
-
             return
                 _userRepository
-                .Find(dbFindType, username, firstname, surname, address, pin, sortBy)
-                .Select(b => _mapper.Map<User>(b));
+                .Find(findType.ToDto(), username, firstname, surname, address, pin, sortBy)
+                .Select(b => b.ToBo());
         }
 
         public User GetUser(string userId)
         {
-            var userDto = _userRepository.Get(userId);
-            var user = _mapper.Map<User>(userDto);
+            var user = _userRepository.Get(userId).ToBo();
             var borrowingsDto = _borrowingRepository.GetUsersCurrentBorrowings(user._id);
-            user.Borrowings = borrowingsDto.Select(b => _mapper.Map<Borrowing>(b));
+            user.Borrowings = borrowingsDto.Select(b => b.ToBo());
             return user;
+        }
+
+        public IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string userId)
+        {
+            var usersBorrowings =
+                _borrowingRepository
+                .GetUsersCurrentBorrowings(userId)
+                .Select(r => r.ToBo());
+
+            return
+                usersBorrowings.
+                Select(r => _bookRepository.Get(r.BookId).ToBo());
+        }
+
+        public IEnumerable<Book> GetUsersBorrowedBooksHistory(string userId)
+        {
+            var usersBorrowings =
+                _borrowingRepository
+                .GetUsersBorrowingsHistory(userId)
+                .Select(r => r.ToBo());
+
+            return
+                usersBorrowings.
+                Select(r => _bookRepository.Get(r.BookId).ToBo());
         }
 
         public User LoginUser(string username, string password)
         {
             var userDto = _userRepository.GetByUserName(username);
-            var user = _mapper.Map<User>(userDto);
+            var user = userDto.ToBo();
 
             if (!user.IsValid)
             {
@@ -105,10 +140,16 @@ namespace BusinessLayer.Managers
             return user;
         }
 
+        public void ReturnBook(string userId, string bookId)
+        {
+            var borrowing = _borrowingRepository.GetByUserAndBook(userId, bookId);
+            borrowing.DateTimeReturned = DateTime.Now;
+            _borrowingRepository.Update(borrowing);
+        }
+
         public void SetPassword(string userId, string password)
         {
-            var user = GetUser(userId);
-            var userDto = _mapper.Map<UserDto>(user);
+            var userDto = GetUser(userId).ToDto();
             var passwordHash = PasswordHelper.HashNewPassword(password);
             userDto.Salt = passwordHash.Item1;
             userDto.Hash = passwordHash.Item2;
@@ -121,9 +162,9 @@ namespace BusinessLayer.Managers
             {
                 userToUpdate.AccountState = AccountState.AwatingApproval;
             }
-            var updateEntity = _mapper.Map<UserDto>(userToUpdate);
+            var updateEntity = userToUpdate.ToDto();
             _userRepository.Update(updateEntity);
-            return _mapper.Map<User>(updateEntity);
+            return updateEntity.ToBo();
         }
     }
 }

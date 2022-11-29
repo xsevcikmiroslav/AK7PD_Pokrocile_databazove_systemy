@@ -3,6 +3,8 @@ using BusinessLayer.Managers.Interfaces;
 using DataLayer.Repositories.Interfaces;
 using DataLayer.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
+using BusinessLayer.BusinessObjects;
 
 namespace BusinessLayerTests
 {
@@ -28,10 +30,13 @@ namespace BusinessLayerTests
             services.AddScoped<IBorrowingRepository, BorrowingRepository>(s =>
                 ActivatorUtilities.CreateInstance<BorrowingRepository>(s, CONNECTION_STRING));
 
+            services.AddScoped<IAdminManager, AdminManager>();
             services.AddScoped<IUserManager, UserManager>();
             services.AddScoped<IBookManager, BookManager>();
 
             _serviceProvider = services.BuildServiceProvider();
+
+            MappingHelper.SetMapper(_serviceProvider.GetRequiredService<IMapper>());
         }
     }
 }
