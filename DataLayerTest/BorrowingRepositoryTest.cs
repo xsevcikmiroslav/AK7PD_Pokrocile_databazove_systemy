@@ -71,7 +71,6 @@ namespace DataLayerTest
             return new BookDto
             {
                 Author = "Test Author Insert",
-                NumberOfBorrowed = 0,
                 NumberOfLicences = 5,
                 NumberOfPages = 200,
                 Title = "Test Title Insert",

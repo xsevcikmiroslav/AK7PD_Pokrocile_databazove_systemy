@@ -7,5 +7,9 @@ namespace BusinessLayer.Managers.Interfaces
         User ApproveUser(string userId);
 
         User BanUser(string userId);
+
+        Backup BackupDatabase();
+
+        void RestoreDatabase(Backup data);
     }
 }

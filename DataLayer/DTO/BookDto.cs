@@ -12,11 +12,9 @@
         
         public int NumberOfLicences { get; set; }
 
-        public int NumberOfBorrowed { get; set; }
-
         public override string ToString()
         {
-            return $"Title: {Title}; Author: {Author}; NumberOfPages: {NumberOfPages}; YearOfPublication: {YearOfPublication}; NumberOfLicences: {NumberOfLicences}; NumberOfBorrowed: {NumberOfBorrowed}";
+            return $"Title: {Title}; Author: {Author}; NumberOfPages: {NumberOfPages}; YearOfPublication: {YearOfPublication}; NumberOfLicences: {NumberOfLicences}";
         }
     }
 }

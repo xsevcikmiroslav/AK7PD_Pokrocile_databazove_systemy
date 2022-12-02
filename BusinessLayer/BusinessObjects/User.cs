@@ -30,7 +30,7 @@
 
         public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
 
-        public bool CanBorrowAnotherBook => MAX_NUMBER_OF_BORROWED_BOOKS < Borrowings.Count();
+        public bool CanBorrowAnotherBook => MAX_NUMBER_OF_BORROWED_BOOKS > Borrowings.Count();
 
         public override bool IsValid =>
             !string.IsNullOrEmpty(Firstname)

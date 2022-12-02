@@ -22,27 +22,33 @@ namespace OnlineLibraryApi.Controllers
         public ActionResult BorrowBook(string userId, string bookId)
         {
             _userManager.BorrowBook(userId, bookId);
-            return NoContent();
+            return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("create")]
         public ActionResult<User> CreateUser([FromBody] User user)
         {
-            return _userManager.CreateUser(user);
+            return _userManager.CreateUser((User)Request.HttpContext.Items["User"], user);
         }
 
         [HttpDelete("{userId}/delete")]
         public ActionResult DeleteUser(string userId)
         {
             _userManager.DeleteUser(userId);
-            return NoContent();
+            return Ok();
         }
 
-        [HttpGet("{findType}/{username}/{firstname}/{surname}/{address}/{pin}/{sortBy}")]
-        public ActionResult<IEnumerable<User>> Find(FindType findType, string username, string firstname, string surname, string address, string pin, string sortBy)
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<User>> OrFind(string? firstname = null, string? surname = null, string? address = null, string? pin = null, string? sortBy = null)
         {
-            return _userManager.Find(findType, username, firstname, surname, address, pin, sortBy).ToList();
+            return _userManager.Find(FindType.OR, string.Empty, firstname ?? "", surname ?? "", address ?? "", pin ?? "", sortBy ?? "").ToList();
+        }
+
+        [HttpGet("andsearch")]
+        public ActionResult<IEnumerable<User>> AndFind(string? firstname = null, string? surname = null, string? address = null, string? pin = null, string? sortBy = null)
+        {
+            return _userManager.Find(FindType.AND, string.Empty, firstname ?? "", surname ?? "", address ?? "", pin ?? "", sortBy ?? "").ToList();
         }
 
         [HttpGet("{userId}")]
@@ -67,14 +73,14 @@ namespace OnlineLibraryApi.Controllers
         public ActionResult ReturnBook(string userId, string bookId)
         {
             _userManager.ReturnBook(userId, bookId);
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost("{userId}/setpassword")]
         public ActionResult SetPassword(string userId, [FromBody] string password)
         {
             _userManager.SetPassword(userId, password);
-            return NoContent();
+            return Ok();
         }
 
         [HttpPut("update")]

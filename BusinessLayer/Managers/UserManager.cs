@@ -7,15 +7,18 @@ namespace BusinessLayer.Managers
 {
     public class UserManager : IUserManager
     {
+        private readonly IBookManager _bookManager;
         private readonly IBookRepository _bookRepository;
         private readonly IBorrowingRepository _borrowingRepository;
         private readonly IUserRepository _userRepository;
 
         public UserManager(
+            IBookManager bookManager,
             IBookRepository bookRepository,
             IBorrowingRepository BorrowingRepository,
             IUserRepository UserRepository)
         {
+            _bookManager = bookManager;
             _bookRepository = bookRepository;
             _borrowingRepository = BorrowingRepository;
             _userRepository = UserRepository;
@@ -23,12 +26,18 @@ namespace BusinessLayer.Managers
 
         public void BorrowBook(string userId, string bookId)
         {
-            if (!UserCanBorrowBook(userId))
+            var user = GetUser(userId);
+            if (!user.CanBorrowAnotherBook)
             {
                 throw new Exception("User cannot borrow another book");
             }
 
-            var book = _bookRepository.Get(bookId).ToBo();
+            if (user.Borrowings.Any(b => b.BookId.ToString().Equals(bookId)))
+            {
+                throw new Exception("User has this book already borrowed");
+            }
+
+            var book = _bookManager.GetBook(bookId);
             if (!book.CanBeBorrowed)
             {
                 throw new Exception("No free licence for this book");
@@ -44,21 +53,21 @@ namespace BusinessLayer.Managers
             _borrowingRepository.Add(borrowing.ToDto());
         }
 
-        private bool UserCanBorrowBook(string userId)
+        public User CreateUser(User createdByUser, User userToCreate)
         {
-            return GetUsersCurrentlyBorrowedBooks(userId).Count() < User.MAX_NUMBER_OF_BORROWED_BOOKS;
-        }
-
-        public User CreateUser(User user)
-        {
-            var existingUser = _userRepository.GetByUserName(user.Username).ToBo();
+            var existingUser = _userRepository.GetByUserName(userToCreate.Username).ToBo();
             if (existingUser.IsValid)
             {
                 throw new Exception("User already exists");
             }
 
-            var userDto = user.ToDto();
-            var password = PasswordHelper.HashNewPassword(user.Password);
+            if (!createdByUser.IsAdmin)
+            {
+                userToCreate.AccountState = AccountState.AwatingApproval;
+            }
+
+            var userDto = userToCreate.ToDto();
+            var password = PasswordHelper.HashNewPassword(userToCreate.Password);
             userDto.Salt = password.Item1;
             userDto.Hash = password.Item2;
             return _userRepository.Add(userDto).ToBo();
@@ -91,33 +100,26 @@ namespace BusinessLayer.Managers
         public User GetUser(string userId)
         {
             var user = _userRepository.Get(userId).ToBo();
-            var borrowingsDto = _borrowingRepository.GetUsersCurrentBorrowings(user._id);
-            user.Borrowings = borrowingsDto.Select(b => b.ToBo());
+            user.Borrowings = _borrowingRepository
+                .GetUsersCurrentBorrowings(user._id)
+                .Select(b => b.ToBo());
             return user;
         }
 
         public IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string userId)
         {
-            var usersBorrowings =
+            return
                 _borrowingRepository
                 .GetUsersCurrentBorrowings(userId)
-                .Select(r => r.ToBo());
-
-            return
-                usersBorrowings.
-                Select(r => _bookRepository.Get(r.BookId).ToBo());
+                .Select(b => _bookRepository.Get(b.ToBo().BookId).ToBo());
         }
 
         public IEnumerable<Book> GetUsersBorrowedBooksHistory(string userId)
         {
-            var usersBorrowings =
+            return
                 _borrowingRepository
                 .GetUsersBorrowingsHistory(userId)
-                .Select(r => r.ToBo());
-
-            return
-                usersBorrowings.
-                Select(r => _bookRepository.Get(r.BookId).ToBo());
+                .Select(b => _bookRepository.Get(b.ToBo().BookId).ToBo());
         }
 
         public User LoginUser(string username, string password)
@@ -127,14 +129,14 @@ namespace BusinessLayer.Managers
 
             if (!user.IsValid)
             {
-                return new User();
+                throw new Exception("User does not exist");
             }
 
             var passwordHash = PasswordHelper.HashPassword(userDto.Salt, password);
 
             if (!passwordHash.SequenceEqual(userDto.Hash))
             {
-                return new User();
+                throw new Exception("Incorrect username or password");
             }
 
             return user;

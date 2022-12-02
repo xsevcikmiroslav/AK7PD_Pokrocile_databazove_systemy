@@ -6,7 +6,7 @@ namespace BusinessLayer.Managers.Interfaces
     {
         void BorrowBook(string userId, string bookId);
 
-        User CreateUser(User user);
+        User CreateUser(User createdByUser, User userToCreate);
 
         void DeleteAllUsers();
 

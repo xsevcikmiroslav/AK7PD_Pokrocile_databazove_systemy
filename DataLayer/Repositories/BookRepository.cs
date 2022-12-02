@@ -14,7 +14,7 @@ namespace DataLayer.Repositories
         public BookRepository(string connectionString)
             : base(connectionString, "Book") { }
 
-        public IEnumerable<BookDto> Find(FindTypeDb findType, string title, string author, int yearOfPublication, string sortBy)
+        public IEnumerable<BookDto> Find(FindTypeDb findType, string title, string author, int yearOfPublication, string sortBy = "Title")
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
@@ -32,15 +32,18 @@ namespace DataLayer.Repositories
                 filters.Add(filterBuilder.Eq("YearOfPublication", yearOfPublication));
             }
 
-            if (!filters.Any())
+            FilterDefinition<BsonDocument> filter;
+            if (filters.Any())
             {
-                yield break;
+                filter =
+                    findType == FindTypeDb.AND
+                    ? filterBuilder.And(filters)
+                    : filterBuilder.Or(filters);
             }
-
-            var filter =
-                findType == FindTypeDb.AND
-                ? filterBuilder.And(filters)
-                : filterBuilder.Or(filters);
+            else
+            {
+                filter = filterBuilder.Empty;
+            }
 
             var queryResult = _mongoCollection.Find(filter);
 
@@ -50,10 +53,10 @@ namespace DataLayer.Repositories
                 queryResult = queryResult.Sort(sort);
             }
 
-            foreach (var result in queryResult.ToEnumerable())
-            {
-                yield return BsonSerializer.Deserialize<BookDto>(result);
-            }
+            return
+                queryResult
+                .ToEnumerable()
+                .Select(e => BsonSerializer.Deserialize<BookDto>(e));
         }
     }
 }

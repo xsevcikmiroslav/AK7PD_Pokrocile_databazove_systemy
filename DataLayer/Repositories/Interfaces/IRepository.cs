@@ -5,6 +5,8 @@ namespace DataLayer.Repositories.Interfaces
     public interface IRepository<T>
         where T : BaseDto
     {
+        IEnumerable<T> GetAll();
+
         T Get(string id);
 
         T Add(T entity);

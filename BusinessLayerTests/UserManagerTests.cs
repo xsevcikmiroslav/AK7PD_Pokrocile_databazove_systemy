@@ -22,7 +22,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(newUser);
+            newUser = _userManager.CreateUser(new User(), newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -52,6 +52,9 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_BorrowAndThenReturnBook_Success()
         {
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(new User(), newUser);
+
             var newBook = GetBookEntity();
             newBook.NumberOfLicences = 1;
             newBook = _bookManager.CreateBook(newBook);
@@ -59,14 +62,14 @@ namespace BusinessLayerTests
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newBook._id);
             Assert.IsTrue(newBook.CanBeBorrowed);
 
-            _userManager.BorrowBook("876543218765432187654321", newBook._id);
+            _userManager.BorrowBook(newUser._id, newBook._id);
 
             var book = _bookManager.GetBook(newBook._id);
 
             Assert.IsNotNull(book);
             Assert.IsFalse(book.CanBeBorrowed);
 
-            _userManager.ReturnBook("876543218765432187654321", newBook._id);
+            _userManager.ReturnBook(newUser._id, newBook._id);
 
             book = _bookManager.GetBook(newBook._id);
 
@@ -94,7 +97,7 @@ namespace BusinessLayerTests
                 var newUser = GetUserEntity();
                 newUser.Username = $"{newUser.Username}{i}";
                 newUser.Address.DescriptiveNumber += $"{i}";
-                newUser = _userManager.CreateUser(newUser);
+                newUser = _userManager.CreateUser(new User(), newUser);
                 Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             }
@@ -115,7 +118,7 @@ namespace BusinessLayerTests
                 var newUser = GetUserEntity();
                 newUser.Username = $"{newUser.Username}{i}";
                 newUser.Address.DescriptiveNumber += $"{i}";
-                newUser = _userManager.CreateUser(newUser);
+                newUser = _userManager.CreateUser(new User(), newUser);
                 Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             }
@@ -135,7 +138,7 @@ namespace BusinessLayerTests
                 var newUser = GetUserEntity();
                 newUser.Username = $"{newUser.Username}{i}";
                 newUser.Address.DescriptiveNumber += $"{i}";
-                newUser = _userManager.CreateUser(newUser);
+                newUser = _userManager.CreateUser(new User(), newUser);
                 Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             }
@@ -152,7 +155,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateUserAndTryLoginWithValidCredentials_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(newUser);
+            newUser = _userManager.CreateUser(new User(), newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -169,16 +172,12 @@ namespace BusinessLayerTests
         public void UserManager_CreateUserAndTryLoginWithInvalidCredentials_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(newUser);
+            newUser = _userManager.CreateUser(new User(), newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
 
-            var loggedUser = _userManager.LoginUser("MirSev", "Hacker01");
-
-            Assert.IsTrue(string.IsNullOrEmpty(loggedUser._id));
-            Assert.AreEqual(string.Empty, loggedUser.Username);
-            Assert.IsFalse(loggedUser.IsValid);
+            Assert.ThrowsException<Exception>(() => _userManager.LoginUser("MirSev", "Hacker01"));
         }
 
 

@@ -3,6 +3,7 @@ using DataLayer.DTO;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using SharpCompress.Common;
 
 namespace DataLayer.Repositories
 {
@@ -37,7 +38,6 @@ namespace DataLayer.Repositories
         public T Add(T entity)
         {
             var bsonDoc = entity.ToBsonDocument();
-            bsonDoc["_id"] = ObjectId.Empty;
             _mongoCollection.InsertOne(bsonDoc);
             entity._id = bsonDoc["_id"].AsObjectId;
             return entity;
@@ -60,6 +60,13 @@ namespace DataLayer.Repositories
             var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(id));
             var entity = _mongoCollection.Find(filter).FirstOrDefault();
             return MapBsonToDto(entity);
+        }
+
+        public IEnumerable<T> GetAll()
+        {
+            var filter = Builders<BsonDocument>.Filter.Empty;
+            var entities = _mongoCollection.Find(filter).ToEnumerable();
+            return entities.Select(e => MapBsonToDto(e));
         }
 
         protected T MapBsonToDto(BsonDocument entity)

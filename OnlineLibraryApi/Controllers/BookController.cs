@@ -28,13 +28,19 @@ namespace OnlineLibraryApi.Controllers
         public ActionResult DeleteBook(string bookId)
         {
             _bookManager.DeleteBook(bookId);
-            return NoContent();
+            return Ok();
+        }
+        
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<Book>> OrFind(string? title = null, string? author = null, int? yearOfPublication = null, string? sortBy = null)
+        {
+            return _bookManager.Find(FindType.OR, title ?? "", author ?? "", yearOfPublication ?? 0, sortBy ?? "").ToList();
         }
 
-        [HttpGet("{findType}/{title}/{author}/{yearOfPublication}/{sortBy}")]
-        public ActionResult<IEnumerable<Book>> Find(FindType findType, string title, string author, int yearOfPublication, string sortBy)
+        [HttpGet("andsearch")]
+        public ActionResult<IEnumerable<Book>> AndFind(string? title = null, string? author = null, int? yearOfPublication = null, string? sortBy = null)
         {
-            return _bookManager.Find(findType, title, author, yearOfPublication, sortBy).ToList();
+            return _bookManager.Find(FindType.AND, title ?? "", author ?? "", yearOfPublication ?? 0, sortBy ?? "").ToList();
         }
 
         [HttpGet("{bookId}")]

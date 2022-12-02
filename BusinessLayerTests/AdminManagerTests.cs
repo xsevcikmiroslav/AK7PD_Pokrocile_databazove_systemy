@@ -22,7 +22,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateThenApproveUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(newUser);
+            newUser = _userManager.CreateUser(new User(), newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -62,7 +62,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateThenApproveThenBanUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(newUser);
+            newUser = _userManager.CreateUser(new User(), newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -90,7 +90,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateThenApproveThenDeleteUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(newUser);
+            newUser = _userManager.CreateUser(new User(), newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);

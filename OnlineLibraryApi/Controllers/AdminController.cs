@@ -28,5 +28,18 @@ namespace OnlineLibraryApi.Controllers
         {
             return _adminManager.BanUser(userId);
         }
+
+        [HttpGet("backupdatabase")]
+        public ActionResult<Backup> BackupDatabase()
+        {
+            return _adminManager.BackupDatabase();
+        }
+
+        [HttpPost("restoredatabase")]
+        public ActionResult RestoreDatabase([FromBody] Backup data)
+        {
+            _adminManager.RestoreDatabase(data);
+            return Ok();
+        }
     }
 }

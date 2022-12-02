@@ -14,7 +14,7 @@ namespace DataLayer.Repositories
         public UserRepository(string connectionString)
             : base(connectionString, "User") { }
 
-        public IEnumerable<UserDto> Find(FindTypeDb findType, string username, string firstname, string surname, string address, string pin, string sortBy)
+        public IEnumerable<UserDto> Find(FindTypeDb findType, string username, string firstname, string surname, string address, string pin, string sortBy = "Username")
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
@@ -48,15 +48,18 @@ namespace DataLayer.Repositories
                 filters.Add(filterBuilder.Regex("Pin", $".*{pin}.*"));
             }
 
-            if (!filters.Any())
+            FilterDefinition<BsonDocument> filter;
+            if (filters.Any())
             {
-                yield break;
+                filter =
+                    findType == FindTypeDb.AND
+                    ? filterBuilder.And(filters)
+                    : filterBuilder.Or(filters);
             }
-
-            var filter =
-                findType == FindTypeDb.AND
-                ? filterBuilder.And(filters)
-                : filterBuilder.Or(filters);
+            else
+            {
+                filter = filterBuilder.Empty;
+            }
 
             var queryResult = _mongoCollection.Find(filter);
 
@@ -66,10 +69,10 @@ namespace DataLayer.Repositories
                 queryResult = queryResult.Sort(sort);
             }
 
-            foreach (var result in queryResult.ToEnumerable())
-            {
-                yield return BsonSerializer.Deserialize<UserDto>(result);
-            }
+            return
+                queryResult
+                .ToEnumerable()
+                .Select(e => BsonSerializer.Deserialize<UserDto>(e));
         }
 
         public UserDto GetByUserName(string username)

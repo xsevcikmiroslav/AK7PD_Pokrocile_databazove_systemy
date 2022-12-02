@@ -19,9 +19,7 @@ namespace BusinessLayer.Managers
 
         public Book CreateBook(Book book)
         {
-            var newEntity = book.ToDto();
-            _bookRepository.Add(newEntity);
-            return newEntity.ToBo();
+            return _bookRepository.Add(book.ToDto()).ToBo();
         }
 
         public void DeleteAllBooks()
@@ -33,9 +31,9 @@ namespace BusinessLayer.Managers
         public void DeleteBook(string bookId)
         {
             var book = GetBook(bookId);
-            foreach (var borrowing in book.Borrowings)
+            if (book.Borrowings.Any())
             {
-                _borrowingRepository.Delete(borrowing._id);
+                throw new Exception("Book cannot be deleted, because it is borrowed");
             }
             _bookRepository.Delete(bookId);
         }
@@ -51,8 +49,9 @@ namespace BusinessLayer.Managers
         public Book GetBook(string bookId)
         {
             var book = _bookRepository.Get(bookId).ToBo();
-            var borrowingsDto = _borrowingRepository.GetBookCurrentBorrowings(book._id);
-            book.Borrowings = borrowingsDto.Select(b => b.ToBo());
+            book.Borrowings = _borrowingRepository
+                .GetBookCurrentBorrowings(book._id)
+                .Select(b => b.ToBo());
             return book;
         }
 

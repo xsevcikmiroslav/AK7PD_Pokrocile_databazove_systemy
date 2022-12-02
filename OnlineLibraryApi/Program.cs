@@ -5,6 +5,7 @@ using DataLayer.Repositories;
 using OnlineLibraryApi.Authentication;
 using AutoMapper;
 using BusinessLayer.BusinessObjects;
+using OnlineLibraryApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IUserManager, UserManager>();
 builder.Services.AddScoped<IAdminManager, AdminManager>();
 builder.Services.AddScoped<IBookManager, BookManager>();
 
+builder.Services.AddScoped<IInit, Init>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +32,9 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 MappingHelper.SetMapper(app.Services.GetRequiredService<IMapper>());
+
+var provider = builder.Services.BuildServiceProvider();
+provider.GetService<IInit>().InitEntres();
 
 app.UseMiddleware<BasicAuthMiddleware>();
 
