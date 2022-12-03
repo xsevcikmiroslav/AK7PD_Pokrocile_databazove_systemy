@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace DataLayer.Repositories
 {
-    public class BorrowingHistoryRepository : BorrowingRepository, IBorrowingHistoryRepository
+    public class BorrowingHistoryRepository : BorrowingRepository<BorrowingHistoryDto>, IBorrowingHistoryRepository
     {
         public BorrowingHistoryRepository()
             : base("BorrowingHistory") { }
@@ -13,12 +13,12 @@ namespace DataLayer.Repositories
         public BorrowingHistoryRepository(string connectionString)
             : base(connectionString, "BorrowingHistory") { }
 
-        public IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId)
+        public IEnumerable<BorrowingHistoryDto> GetUsersBorrowingsHistory(string userId)
         {
             return GetBorrowingsHistory("UserId", userId);
         }
 
-        private IEnumerable<BorrowingDto> GetBorrowingsHistory(string foreignIdName, string foreignIdValue)
+        private IEnumerable<BorrowingHistoryDto> GetBorrowingsHistory(string foreignIdName, string foreignIdValue)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 
@@ -31,7 +31,7 @@ namespace DataLayer.Repositories
             }
         }
 
-        public IEnumerable<BorrowingDto> GetBookBorrowingsHistory(string bookId)
+        public IEnumerable<BorrowingHistoryDto> GetBookBorrowingsHistory(string bookId)
         {
             return GetBorrowingsHistory("BookId", bookId);
         }

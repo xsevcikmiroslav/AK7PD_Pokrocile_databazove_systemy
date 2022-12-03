@@ -31,7 +31,16 @@ namespace BusinessLayer.Automapper
                 .ForMember(dest => dest._id, opt => opt.MapFrom(src => src._id.ToString()))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId.ToString()))
                 .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.BookId.ToString()));
-            
+
+            CreateMap<BorrowingHistory, BorrowingHistoryDto>()
+                .ForMember(dest => dest._id, opt => opt.MapFrom(src => GetObjectIdStringOrDefault(src._id)))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => GetObjectIdStringOrDefault(src.UserId)))
+                .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => GetObjectIdStringOrDefault(src.BookId)))
+                .ReverseMap()
+                .ForMember(dest => dest._id, opt => opt.MapFrom(src => src._id.ToString()))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId.ToString()))
+                .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.BookId.ToString()));
+
             CreateMap<Address, AddressDto>().ReverseMap();
             
             CreateMap<FindType, FindTypeDb>().ReverseMap();

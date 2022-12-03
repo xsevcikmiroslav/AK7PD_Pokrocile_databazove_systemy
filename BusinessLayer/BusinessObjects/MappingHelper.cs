@@ -44,6 +44,16 @@ namespace BusinessLayer.BusinessObjects
             return _mapper.Map<Borrowing>(user);
         }
 
+        public static BorrowingHistoryDto ToDto(this BorrowingHistory user)
+        {
+            return _mapper.Map<BorrowingHistoryDto>(user);
+        }
+
+        public static BorrowingHistory ToBo(this BorrowingHistoryDto user)
+        {
+            return _mapper.Map<BorrowingHistory>(user);
+        }
+
         public static FindTypeDb ToDto(this FindType findType)
         {
             return _mapper.Map<FindTypeDb>(findType);

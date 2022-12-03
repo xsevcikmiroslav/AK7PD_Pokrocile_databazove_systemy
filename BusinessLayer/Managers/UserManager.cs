@@ -60,8 +60,15 @@ namespace BusinessLayer.Managers
 
             _currentBorrowingRepository.Add(borrowing.ToDto());
 
-            borrowing.DateTimeReturned = DateTime.Now.AddDays(6);
-            _borrowingHistoryRepository.Add(borrowing.ToDto());
+            var borrowingHistory = new BorrowingHistory
+            {
+                BookId = bookId,
+                UserId = userId,
+                DateTimeBorrowed = DateTime.Now,
+                DateTimeReturned = DateTime.Now.AddDays(User.MAX_BORROWING_DURATION_DAYS)
+            };
+            
+            _borrowingHistoryRepository.Add(borrowingHistory.ToDto());
         }
 
         public User CreateUser(bool createdByAdmin, User userToCreate)
@@ -111,20 +118,36 @@ namespace BusinessLayer.Managers
             return user;
         }
 
-        public IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string userId)
+        public IEnumerable<Borrowing> GetUsersCurrentBorrowings(string userId)
         {
-            return
+            var borrowings =
                 _currentBorrowingRepository
                 .GetUsersCurrentBorrowings(userId)
-                .Select(b => _bookRepository.Get(b.ToBo().BookId).ToBo());
+                .Select(b => b.ToBo())
+                .ToList();
+                
+            foreach (var borrowing in borrowings)
+            {
+                borrowing.Book = _bookRepository.Get(borrowing.BookId).ToBo();
+            }
+            
+            return borrowings;
         }
 
-        public IEnumerable<Book> GetUsersBorrowedBooksHistory(string userId)
+        public IEnumerable<BorrowingHistory> GetUsersBorrowingsHistory(string userId)
         {
-            return
+            var borrowings =
                 _borrowingHistoryRepository
                 .GetUsersBorrowingsHistory(userId)
-                .Select(b => _bookRepository.Get(b.ToBo().BookId).ToBo());
+                .Select(b => b.ToBo())
+                .ToList();
+
+            foreach (var borrowing in borrowings)
+            {
+                borrowing.Book = _bookRepository.Get(borrowing.BookId).ToBo();
+            }
+
+            return borrowings;
         }
 
         public User LoginUser(string username, string password)
@@ -150,8 +173,13 @@ namespace BusinessLayer.Managers
         public void ReturnBook(string userId, string bookId)
         {
             var currentBorrowing = _currentBorrowingRepository.GetByUserAndBook(userId, bookId);
+            if (currentBorrowing == null)
+            {
+                throw new Exception("User does not have this book borrowed");
+            }
+
             _currentBorrowingRepository.Delete(currentBorrowing._id.ToString());
-            
+
             var borrowingHistory = _borrowingHistoryRepository.GetByUserAndBook(userId, bookId);
             borrowingHistory.DateTimeReturned = DateTime.Now;
             _borrowingHistoryRepository.Update(borrowingHistory);
@@ -168,15 +196,21 @@ namespace BusinessLayer.Managers
 
         public User UpdateUser(bool updatedByAdmin, User userToUpdate)
         {
+            var user = GetUser(userToUpdate._id);
+            if (!user.IsValid)
+            {
+                throw new Exception("$User {userToUpdate._id} does not exist");
+            }
+
             if (!updatedByAdmin)
             {
-                var user = GetUser(userToUpdate._id);
                 if (user.AccountState != AccountState.Active)
                 {
                     throw new Exception("User cannot update account when it is not Approved by admin");
                 }
                 userToUpdate.AccountState = AccountState.AwatingApproval;
             }
+
             _userRepository.Update(userToUpdate.ToDto());
             return userToUpdate;
         }

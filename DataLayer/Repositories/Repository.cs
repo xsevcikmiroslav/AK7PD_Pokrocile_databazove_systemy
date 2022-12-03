@@ -83,7 +83,9 @@ namespace DataLayer.Repositories
             var filter = Builders<BsonDocument>.Filter.Eq("_id", entity._id);
             var bsonDoc = entity.ToBsonDocument();
 
-            foreach (var prop in entity.GetType().GetProperties().Where(p => !p.Name.Equals("_id")))
+            var fieldsToOmit = new string[] { "_id", "Salt", "Hash" };
+
+            foreach (var prop in entity.GetType().GetProperties().Where(p => !fieldsToOmit.Contains(p.Name)))
             {
                 var updateBuilder = Builders<BsonDocument>.Update;
                 var update = updateBuilder.Set(prop.Name, bsonDoc[prop.Name]);

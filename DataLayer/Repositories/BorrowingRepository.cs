@@ -5,7 +5,8 @@ using MongoDB.Driver;
 
 namespace DataLayer.Repositories
 {
-    public abstract class BorrowingRepository : Repository<BorrowingDto>, IBorrowingRepository
+    public abstract class BorrowingRepository<T> : Repository<T>, IBorrowingRepository<T>
+        where T : BorrowingDto, new()
     {
         public BorrowingRepository(string collectionName)
             : base(collectionName) { }
@@ -13,7 +14,7 @@ namespace DataLayer.Repositories
         public BorrowingRepository(string connectionString, string collectionName)
             : base(connectionString, collectionName) { }
 
-        public BorrowingDto GetByUserAndBook(string userId, string bookId)
+        public T GetByUserAndBook(string userId, string bookId)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
 

@@ -66,7 +66,7 @@ namespace BusinessLayer.Managers
             AddAllEntities(_bookRepository, backup.Books);
             AddAllEntities(_userRepository, backup.Users);
             AddAllEntities(_currentBorrowingRepository, backup.Borrowings);
-            AddAllEntities(_borrowingHistoryRepository, backup.Borrowings);
+            AddAllEntities(_borrowingHistoryRepository, backup.BorrowingsHistory);
         }
 
         private void AddAllEntities<T>(IRepository<T> repository, IEnumerable<T> entites)

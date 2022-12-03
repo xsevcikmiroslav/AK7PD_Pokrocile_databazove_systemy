@@ -51,16 +51,16 @@ namespace OnlineLibraryApi.Controllers
             return _userManager.GetUser(userId);
         }
 
-        [HttpGet("{userId}/currentlyborrowed")]
-        public ActionResult<IEnumerable<Book>> GetUsersCurrentlyBorrowedBooks(string UserId)
+        [HttpGet("{userId}/currentborrowings")]
+        public ActionResult<IEnumerable<Borrowing>> GetUsersCurrentBorrowings(string UserId)
         {
-            return _userManager.GetUsersCurrentlyBorrowedBooks(UserId).ToList();
+            return _userManager.GetUsersCurrentBorrowings(UserId).ToList();
         }
 
-        [HttpGet("{userId}/historicallyborrowed")]
-        public ActionResult<IEnumerable<Book>> GetUsersBorrowedBooksHistory(string UserId)
+        [HttpGet("{userId}/borrowingshistory")]
+        public ActionResult<IEnumerable<BorrowingHistory>> GetUsersBorrowingsHistory(string UserId)
         {
-            return _userManager.GetUsersBorrowedBooksHistory(UserId).ToList();
+            return _userManager.GetUsersBorrowingsHistory(UserId).ToList();
         }
 
         [HttpPost("{userId}/return/{bookId}")]

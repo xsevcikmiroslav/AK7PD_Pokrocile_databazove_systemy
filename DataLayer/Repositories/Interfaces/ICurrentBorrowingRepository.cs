@@ -2,7 +2,7 @@
 
 namespace DataLayer.Repositories.Interfaces
 {
-    public interface ICurrentBorrowingRepository : IBorrowingRepository
+    public interface ICurrentBorrowingRepository : IBorrowingRepository<BorrowingDto>
     {
         IEnumerable<BorrowingDto> GetUsersCurrentBorrowings(string userId);
 

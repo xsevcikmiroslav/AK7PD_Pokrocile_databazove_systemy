@@ -86,10 +86,10 @@ namespace BusinessLayerTests
             Assert.IsNotNull(book);
             Assert.IsTrue(newBook.CanBeBorrowed);
 
-            var currentlyBorrowed = _userManager.GetUsersCurrentlyBorrowedBooks(newUser._id);
+            var currentlyBorrowed = _userManager.GetUsersCurrentBorrowings(newUser._id);
             Assert.AreEqual(0, currentlyBorrowed.Count());
 
-            var historicallyBorrowed = _userManager.GetUsersBorrowedBooksHistory(newUser._id);
+            var historicallyBorrowed = _userManager.GetUsersBorrowingsHistory(newUser._id);
             Assert.AreEqual(1, historicallyBorrowed.Count());
         }
 
@@ -219,11 +219,11 @@ namespace BusinessLayerTests
                 }
             }
 
-            var books = _userManager.GetUsersCurrentlyBorrowedBooks(userId);
+            var borrowings = _userManager.GetUsersCurrentBorrowings(userId);
 
-            Assert.AreEqual(2, books.Count());
-            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 5")));
-            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 10")));
+            Assert.AreEqual(2, borrowings.Count());
+            Assert.IsTrue(borrowings.Any(b => b.Book.Title.Equals("Book Manager Test Insert 5")));
+            Assert.IsTrue(borrowings.Any(b => b.Book.Title.Equals("Book Manager Test Insert 10")));
         }
 
         [TestMethod]
@@ -249,11 +249,11 @@ namespace BusinessLayerTests
                 }
             }
 
-            var books = _userManager.GetUsersCurrentlyBorrowedBooks(userId);
+            var borrowings = _userManager.GetUsersCurrentBorrowings(userId);
 
-            Assert.IsNotNull(books);
-            Assert.IsFalse(books.Any());
-            Assert.AreEqual(0, books.Count());
+            Assert.IsNotNull(borrowings);
+            Assert.IsFalse(borrowings.Any());
+            Assert.AreEqual(0, borrowings.Count());
         }
 
         [TestMethod]
@@ -278,11 +278,11 @@ namespace BusinessLayerTests
                 }
             }
 
-            var books = _userManager.GetUsersBorrowedBooksHistory(userId);
+            var borrowings = _userManager.GetUsersBorrowingsHistory(userId);
 
-            Assert.AreEqual(2, books.Count());
-            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 5")));
-            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 10")));
+            Assert.AreEqual(2, borrowings.Count());
+            Assert.IsTrue(borrowings.Any(b => b.Book.Title.Equals("Book Manager Test Insert 5")));
+            Assert.IsTrue(borrowings.Any(b => b.Book.Title.Equals("Book Manager Test Insert 10")));
         }
 
         [TestMethod]
@@ -308,11 +308,11 @@ namespace BusinessLayerTests
                 }
             }
 
-            var books = _userManager.GetUsersBorrowedBooksHistory(userId);
+            var borrowings = _userManager.GetUsersBorrowingsHistory(userId);
 
-            Assert.AreEqual(2, books.Count());
-            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 5")));
-            Assert.IsTrue(books.Any(b => b.Title.Equals("Book Manager Test Insert 10")));
+            Assert.AreEqual(2, borrowings.Count());
+            Assert.IsTrue(borrowings.Any(b => b.Book.Title.Equals("Book Manager Test Insert 5")));
+            Assert.IsTrue(borrowings.Any(b => b.Book.Title.Equals("Book Manager Test Insert 10")));
         }
 
         [TestCleanup]

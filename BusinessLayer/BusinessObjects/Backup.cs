@@ -10,6 +10,6 @@ namespace BusinessLayer.BusinessObjects
 
         public IEnumerable<BorrowingDto> Borrowings { get; set; }
 
-        public IEnumerable<BorrowingDto> BorrowingsHistory { get; set; }
+        public IEnumerable<BorrowingHistoryDto> BorrowingsHistory { get; set; }
     }
 }

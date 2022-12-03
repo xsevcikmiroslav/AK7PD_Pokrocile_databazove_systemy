@@ -14,9 +14,9 @@ namespace BusinessLayer.Managers.Interfaces
 
         User GetUser(string userId);
 
-        IEnumerable<Book> GetUsersBorrowedBooksHistory(string UserId);
+        IEnumerable<BorrowingHistory> GetUsersBorrowingsHistory(string UserId);
 
-        IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string UserId);
+        IEnumerable<Borrowing> GetUsersCurrentBorrowings(string UserId);
 
         User LoginUser(string username, string password);
 

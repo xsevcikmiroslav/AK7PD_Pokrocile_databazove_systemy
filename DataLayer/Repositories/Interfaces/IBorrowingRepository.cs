@@ -2,8 +2,9 @@
 
 namespace DataLayer.Repositories.Interfaces
 {
-    public interface IBorrowingRepository : IRepository<BorrowingDto>
+    public interface IBorrowingRepository<T> : IRepository<T>
+        where T : BorrowingDto
     {
-        BorrowingDto GetByUserAndBook(string userId, string bookId);
+        T GetByUserAndBook(string userId, string bookId);
     }
 }

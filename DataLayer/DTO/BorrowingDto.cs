@@ -9,7 +9,5 @@ namespace DataLayer.DTO
         public ObjectId UserId { get; set; } = ObjectId.Empty;
         
         public DateTime DateTimeBorrowed { get; set; } = DateTime.MinValue;
-
-        public DateTime DateTimeReturned { get; set; } = DateTime.MinValue;
     }
 }

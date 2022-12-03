@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace DataLayer.Repositories
 {
-    public class CurrentBorrowingRepository : BorrowingRepository, ICurrentBorrowingRepository
+    public class CurrentBorrowingRepository : BorrowingRepository<BorrowingDto>, ICurrentBorrowingRepository
     {
         public CurrentBorrowingRepository()
             : base("Borrowing") { }
@@ -24,8 +24,6 @@ namespace DataLayer.Repositories
 
             var filters = new FilterDefinition<BsonDocument>[] {
                 filterBuilder.Eq(foreignIdName, ObjectId.Parse(foreignIdValue)),
-                filterBuilder.Eq("DateTimeReturned", DateTime.MinValue),
-                filterBuilder.Gt("DateTimeBorrowed", DateTime.MinValue)
             };
             var filter = filterBuilder.And(filters);
 

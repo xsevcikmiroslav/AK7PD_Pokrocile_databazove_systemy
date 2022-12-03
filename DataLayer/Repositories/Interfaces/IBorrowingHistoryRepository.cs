@@ -2,10 +2,10 @@
 
 namespace DataLayer.Repositories.Interfaces
 {
-    public interface IBorrowingHistoryRepository : IBorrowingRepository
+    public interface IBorrowingHistoryRepository : IBorrowingRepository<BorrowingHistoryDto>
     {
-        IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId);
+        IEnumerable<BorrowingHistoryDto> GetUsersBorrowingsHistory(string userId);
 
-        IEnumerable<BorrowingDto> GetBookBorrowingsHistory(string bookId);
+        IEnumerable<BorrowingHistoryDto> GetBookBorrowingsHistory(string bookId);
     }
 }

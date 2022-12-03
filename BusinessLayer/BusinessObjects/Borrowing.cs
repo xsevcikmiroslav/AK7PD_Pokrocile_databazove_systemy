@@ -10,7 +10,7 @@ namespace BusinessLayer.BusinessObjects
 
         public DateTime DateTimeBorrowed { get; set; } = DateTime.MinValue;
 
-        public DateTime DateTimeReturned { get; set; } = DateTime.MinValue;
+        public Book Book { get; set; } = new Book();
 
         [JsonIgnore]
         public override bool IsValid =>
