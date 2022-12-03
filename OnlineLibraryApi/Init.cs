@@ -26,12 +26,13 @@ namespace OnlineLibraryApi
             _bookManager.DeleteAllBooks();
             _userManager.DeleteAllUsers();
 
-            var fakeAdminUser = new User
-            {
-                IsAdmin = true,
-            };
+            CreateAdminUser();
+            CreateUserAndBooks();
+        }
 
-            _userManager.CreateUser(fakeAdminUser, new User
+        private void CreateAdminUser()
+        {
+            _userManager.CreateUser(true, new User
             {
                 AccountState = AccountState.Active,
                 Firstname = "admin",
@@ -45,28 +46,13 @@ namespace OnlineLibraryApi
                     Street = "Dvorska",
                     DescriptiveNumber = "120"
                 },
-                Pin = "0101010019",
+                Pin = "0101010008",
                 IsAdmin = true
             });
+        }
 
-            _userManager.CreateUser(fakeAdminUser, new User
-            {
-                AccountState = AccountState.Active,
-                Firstname = "Miroslav",
-                Surname = "Sevcik",
-                Username = "MirSev",
-                Password = "123",
-                Address = new Address
-                {
-                    Zip = "67801",
-                    City = "Blansko",
-                    Street = "Krizkovskeho",
-                    DescriptiveNumber = "1124",
-                    OrientationNumber = "29"
-                },
-                Pin = "0101010008"
-            });
-
+        private void CreateUserAndBooks()
+        {
             var books = new string[]
             {
                 "Abhorsen Trilogy|Garth Nix",
@@ -644,9 +630,37 @@ namespace OnlineLibraryApi
                 });
             }
 
-            var bookToBorrow = _bookManager.Find(BusinessLayer.Managers.FindType.AND, "Hobbit", "Tolkien", 0, "").First();
-            var user = _userManager.Find(BusinessLayer.Managers.FindType.AND, "MirSev", "", "", "", "", "").First();
-            _userManager.BorrowBook(user._id, bookToBorrow._id);
+            for (int i = 1; i <= 5; i++)
+            {
+                _userManager.CreateUser(i <= 2, new User
+                {
+                    AccountState = AccountState.Active,
+                    Firstname = "Firstname",
+                    Surname = "Surname",
+                    Username = $"Username{i}",
+                    Password = "123",
+                    Address = new Address
+                    {
+                        Zip = "67801",
+                        City = "City",
+                        Street = "Street",
+                        DescriptiveNumber = $"12{i}",
+                        OrientationNumber = $"{i}"
+                    },
+                    Pin = (101010008 + (11 * i)).ToString("D10"),
+                });
+            }
+            
+            var bookToBorrow1 = _bookManager.Find(BusinessLayer.Managers.FindType.AND, "Hobbit", "Tolkien").First();
+            var user1 = _adminManager.Find(BusinessLayer.Managers.FindType.AND, "Username1").First();
+            _userManager.BorrowBook(user1._id, bookToBorrow1._id);
+            var bookToBorrow2 = _bookManager.Find(BusinessLayer.Managers.FindType.AND, "Lor", "Tolkien").First();
+            _userManager.BorrowBook(user1._id, bookToBorrow2._id);
+            _userManager.ReturnBook(user1._id, bookToBorrow2._id);
+
+            var bookToBorrow3 = _bookManager.Find(BusinessLayer.Managers.FindType.AND, "Sil", "Tolkien").First();
+            var user2 = _adminManager.Find(BusinessLayer.Managers.FindType.AND, "Username2").First();
+            _userManager.BorrowBook(user2._id, bookToBorrow3._id);
         }
     }
 }

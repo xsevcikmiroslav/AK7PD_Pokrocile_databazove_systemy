@@ -7,14 +7,17 @@ namespace BusinessLayer.Managers
     public class BookManager : IBookManager
     {
         private readonly IBookRepository _bookRepository;
-        private readonly IBorrowingRepository _borrowingRepository;
+        private readonly ICurrentBorrowingRepository _currentBorrowingRepository;
+        private readonly IBorrowingHistoryRepository _borrowingHistoryRepository;
 
         public BookManager(
             IBookRepository bookRepository,
-            IBorrowingRepository BorrowingRepository)
+            ICurrentBorrowingRepository currentBorrowingRepository,
+            IBorrowingHistoryRepository borrowingHistoryRepository)
         {
             _bookRepository = bookRepository;
-            _borrowingRepository = BorrowingRepository;
+            _currentBorrowingRepository = currentBorrowingRepository;
+            _borrowingHistoryRepository = borrowingHistoryRepository;
         }
 
         public Book CreateBook(Book book)
@@ -24,7 +27,8 @@ namespace BusinessLayer.Managers
 
         public void DeleteAllBooks()
         {
-            _borrowingRepository.DeleteAll();
+            _currentBorrowingRepository.DeleteAll();
+            _borrowingHistoryRepository.DeleteAll();
             _bookRepository.DeleteAll();
         }
 
@@ -38,18 +42,18 @@ namespace BusinessLayer.Managers
             _bookRepository.Delete(bookId);
         }
 
-        public IEnumerable<Book> Find(FindType findType, string title, string author, int yearOfPublication, string sortBy)
+        public IEnumerable<Book> Find(FindType findType, string title, string author = "", int? yearOfPublication = 0, string sortBy = "")
         {
             return
                 _bookRepository
-                .Find(findType.ToDto(), title, author, yearOfPublication, sortBy)
+                .Find(findType.ToDto(), title, author, yearOfPublication ?? 0, sortBy)
                 .Select(b => b.ToBo());
         }
 
         public Book GetBook(string bookId)
         {
             var book = _bookRepository.Get(bookId).ToBo();
-            book.Borrowings = _borrowingRepository
+            book.Borrowings = _currentBorrowingRepository
                 .GetBookCurrentBorrowings(book._id)
                 .Select(b => b.ToBo());
             return book;

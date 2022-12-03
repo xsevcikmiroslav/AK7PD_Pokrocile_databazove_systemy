@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.BusinessObjects;
+using BusinessLayer.Managers;
 using BusinessLayer.Managers.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
@@ -18,11 +19,17 @@ namespace BusinessLayerTests
             _userManager = _serviceProvider.GetService<IUserManager>();
         }
 
+        [TestInitialize]
+        public void Init()
+        {
+            _userManager.DeleteAllUsers();
+        }
+
         [TestMethod]
         public void UserManager_CreateThenApproveUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -62,7 +69,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateThenApproveThenBanUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -90,7 +97,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateThenApproveThenDeleteUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);

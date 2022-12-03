@@ -6,9 +6,11 @@ namespace BusinessLayer.Managers.Interfaces
     {
         User ApproveUser(string userId);
 
+        Backup BackupDatabase();
+
         User BanUser(string userId);
 
-        Backup BackupDatabase();
+        IEnumerable<User> Find(FindType findType, string username, string firstname = "", string surname = "", string address = "", string pin = "", string sortBy = "");
 
         void RestoreDatabase(Backup data);
     }

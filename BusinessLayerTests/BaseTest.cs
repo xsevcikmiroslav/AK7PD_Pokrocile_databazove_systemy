@@ -27,8 +27,10 @@ namespace BusinessLayerTests
                 ActivatorUtilities.CreateInstance<UserRepository>(s, CONNECTION_STRING));
             services.AddScoped<IBookRepository, BookRepository>(s =>
                 ActivatorUtilities.CreateInstance<BookRepository>(s, CONNECTION_STRING));
-            services.AddScoped<IBorrowingRepository, BorrowingRepository>(s =>
-                ActivatorUtilities.CreateInstance<BorrowingRepository>(s, CONNECTION_STRING));
+            services.AddScoped<IBorrowingHistoryRepository, BorrowingHistoryRepository>(s =>
+                ActivatorUtilities.CreateInstance<BorrowingHistoryRepository>(s, CONNECTION_STRING));
+            services.AddScoped<ICurrentBorrowingRepository, CurrentBorrowingRepository>(s =>
+                ActivatorUtilities.CreateInstance<CurrentBorrowingRepository>(s, CONNECTION_STRING));
 
             services.AddScoped<IAdminManager, AdminManager>();
             services.AddScoped<IUserManager, UserManager>();

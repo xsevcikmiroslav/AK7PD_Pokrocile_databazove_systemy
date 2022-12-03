@@ -1,4 +1,6 @@
-﻿namespace BusinessLayer.BusinessObjects
+﻿using System.Text.Json.Serialization;
+
+namespace BusinessLayer.BusinessObjects
 {
     public class Address : IBusinessObjectValidation
     {
@@ -12,6 +14,7 @@
 
         public string Zip { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public bool IsValid =>
             !string.IsNullOrEmpty(City)
             && !string.IsNullOrEmpty(Zip)

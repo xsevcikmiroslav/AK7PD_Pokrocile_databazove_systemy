@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.BusinessObjects;
+using BusinessLayer.Managers;
 using BusinessLayer.Managers.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using OnlineLibraryApi.Authentication;
@@ -40,6 +41,18 @@ namespace OnlineLibraryApi.Controllers
         {
             _adminManager.RestoreDatabase(data);
             return Ok();
+        }
+
+        [HttpGet("searchuser")]
+        public ActionResult<IEnumerable<User>> OrFind(string? firstname = null, string? surname = null, string? address = null, string? pin = null, string? sortBy = null)
+        {
+            return _adminManager.Find(FindType.OR, string.Empty, firstname, surname, address, pin, sortBy).ToList();
+        }
+
+        [HttpGet("andsearchuser")]
+        public ActionResult<IEnumerable<User>> AndFind(string? firstname = null, string? surname = null, string? address = null, string? pin = null, string? sortBy = null)
+        {
+            return _adminManager.Find(FindType.AND, string.Empty, firstname, surname, address, pin, sortBy).ToList();
         }
     }
 }

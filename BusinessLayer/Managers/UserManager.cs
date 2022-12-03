@@ -9,24 +9,32 @@ namespace BusinessLayer.Managers
     {
         private readonly IBookManager _bookManager;
         private readonly IBookRepository _bookRepository;
-        private readonly IBorrowingRepository _borrowingRepository;
+        private readonly ICurrentBorrowingRepository _currentBorrowingRepository;
+        private readonly IBorrowingHistoryRepository _borrowingHistoryRepository;
         private readonly IUserRepository _userRepository;
 
         public UserManager(
             IBookManager bookManager,
             IBookRepository bookRepository,
-            IBorrowingRepository BorrowingRepository,
+            ICurrentBorrowingRepository currentBorrowingRepository,
+            IBorrowingHistoryRepository borrowingHistoryRepository,
             IUserRepository UserRepository)
         {
             _bookManager = bookManager;
             _bookRepository = bookRepository;
-            _borrowingRepository = BorrowingRepository;
+            _currentBorrowingRepository = currentBorrowingRepository;
+            _borrowingHistoryRepository = borrowingHistoryRepository;
             _userRepository = UserRepository;
         }
 
         public void BorrowBook(string userId, string bookId)
         {
             var user = GetUser(userId);
+            if (user.AccountState != AccountState.Active)
+            {
+                throw new Exception("User account is awaiting approval");
+            }
+
             if (!user.CanBorrowAnotherBook)
             {
                 throw new Exception("User cannot borrow another book");
@@ -50,10 +58,13 @@ namespace BusinessLayer.Managers
                 DateTimeBorrowed = DateTime.Now,
             };
 
-            _borrowingRepository.Add(borrowing.ToDto());
+            _currentBorrowingRepository.Add(borrowing.ToDto());
+
+            borrowing.DateTimeReturned = DateTime.Now.AddDays(6);
+            _borrowingHistoryRepository.Add(borrowing.ToDto());
         }
 
-        public User CreateUser(User createdByUser, User userToCreate)
+        public User CreateUser(bool createdByAdmin, User userToCreate)
         {
             var existingUser = _userRepository.GetByUserName(userToCreate.Username).ToBo();
             if (existingUser.IsValid)
@@ -61,7 +72,7 @@ namespace BusinessLayer.Managers
                 throw new Exception("User already exists");
             }
 
-            if (!createdByUser.IsAdmin)
+            if (!createdByAdmin)
             {
                 userToCreate.AccountState = AccountState.AwatingApproval;
             }
@@ -78,29 +89,23 @@ namespace BusinessLayer.Managers
             var user = GetUser(userId);
             foreach (var borrowing in user.Borrowings)
             {
-                _borrowingRepository.Delete(borrowing._id);
+                _currentBorrowingRepository.Delete(borrowing._id);
+                _borrowingHistoryRepository.Delete(borrowing._id);
             }
             _userRepository.Delete(userId);
         }
 
         public void DeleteAllUsers()
         {
-            _borrowingRepository.DeleteAll();
+            _currentBorrowingRepository.DeleteAll();
+            _borrowingHistoryRepository.DeleteAll();
             _userRepository.DeleteAll();
-        }
-
-        public IEnumerable<User> Find(FindType findType, string username, string firstname, string surname, string address, string pin, string sortBy)
-        {
-            return
-                _userRepository
-                .Find(findType.ToDto(), username, firstname, surname, address, pin, sortBy)
-                .Select(b => b.ToBo());
         }
 
         public User GetUser(string userId)
         {
             var user = _userRepository.Get(userId).ToBo();
-            user.Borrowings = _borrowingRepository
+            user.Borrowings = _currentBorrowingRepository
                 .GetUsersCurrentBorrowings(user._id)
                 .Select(b => b.ToBo());
             return user;
@@ -109,7 +114,7 @@ namespace BusinessLayer.Managers
         public IEnumerable<Book> GetUsersCurrentlyBorrowedBooks(string userId)
         {
             return
-                _borrowingRepository
+                _currentBorrowingRepository
                 .GetUsersCurrentBorrowings(userId)
                 .Select(b => _bookRepository.Get(b.ToBo().BookId).ToBo());
         }
@@ -117,7 +122,7 @@ namespace BusinessLayer.Managers
         public IEnumerable<Book> GetUsersBorrowedBooksHistory(string userId)
         {
             return
-                _borrowingRepository
+                _borrowingHistoryRepository
                 .GetUsersBorrowingsHistory(userId)
                 .Select(b => _bookRepository.Get(b.ToBo().BookId).ToBo());
         }
@@ -144,9 +149,12 @@ namespace BusinessLayer.Managers
 
         public void ReturnBook(string userId, string bookId)
         {
-            var borrowing = _borrowingRepository.GetByUserAndBook(userId, bookId);
-            borrowing.DateTimeReturned = DateTime.Now;
-            _borrowingRepository.Update(borrowing);
+            var currentBorrowing = _currentBorrowingRepository.GetByUserAndBook(userId, bookId);
+            _currentBorrowingRepository.Delete(currentBorrowing._id.ToString());
+            
+            var borrowingHistory = _borrowingHistoryRepository.GetByUserAndBook(userId, bookId);
+            borrowingHistory.DateTimeReturned = DateTime.Now;
+            _borrowingHistoryRepository.Update(borrowingHistory);
         }
 
         public void SetPassword(string userId, string password)
@@ -158,10 +166,15 @@ namespace BusinessLayer.Managers
             _userRepository.Update(userDto);
         }
 
-        public User UpdateUser(User updatedBy, User userToUpdate)
+        public User UpdateUser(bool updatedByAdmin, User userToUpdate)
         {
-            if (!updatedBy.IsAdmin)
+            if (!updatedByAdmin)
             {
+                var user = GetUser(userToUpdate._id);
+                if (user.AccountState != AccountState.Active)
+                {
+                    throw new Exception("User cannot update account when it is not Approved by admin");
+                }
                 userToUpdate.AccountState = AccountState.AwatingApproval;
             }
             _userRepository.Update(userToUpdate.ToDto());

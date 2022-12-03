@@ -1,4 +1,6 @@
-﻿namespace BusinessLayer.BusinessObjects
+﻿using System.Text.Json.Serialization;
+
+namespace BusinessLayer.BusinessObjects
 {
     public class Book : BaseBusinessObject
     {
@@ -17,6 +19,7 @@
         public bool CanBeBorrowed
             => NumberOfLicences > Borrowings.Count();
 
+        [JsonIgnore]
         public override bool IsValid =>
             !string.IsNullOrEmpty(Title)
             && !string.IsNullOrEmpty(Author)

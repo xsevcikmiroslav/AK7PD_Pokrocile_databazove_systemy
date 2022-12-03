@@ -16,6 +16,7 @@ namespace DataLayerTest
         public void Init()
         {
             repository = getRepository();
+            repository.DeleteAll();
         }
 
         protected abstract IRepository<T> getRepository();

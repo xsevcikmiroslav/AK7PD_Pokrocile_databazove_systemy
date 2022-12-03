@@ -6,13 +6,11 @@ namespace BusinessLayer.Managers.Interfaces
     {
         void BorrowBook(string userId, string bookId);
 
-        User CreateUser(User createdByUser, User userToCreate);
+        User CreateUser(bool createdByAdmin, User userToCreate);
 
         void DeleteAllUsers();
 
         void DeleteUser(string userId);
-
-        IEnumerable<User> Find(FindType findType, string username, string firstname, string surname, string address, string pin, string sortBy);
 
         User GetUser(string userId);
 
@@ -26,6 +24,6 @@ namespace BusinessLayer.Managers.Interfaces
 
         void SetPassword(string userId, string password);
 
-        User UpdateUser(User updatedBy, User userToUpdate);
+        User UpdateUser(bool updatedByAdmin, User userToUpdate);
     }
 }

@@ -9,5 +9,7 @@ namespace BusinessLayer.BusinessObjects
         public IEnumerable<UserDto> Users { get; set; }
 
         public IEnumerable<BorrowingDto> Borrowings { get; set; }
+
+        public IEnumerable<BorrowingDto> BorrowingsHistory { get; set; }
     }
 }

@@ -34,13 +34,13 @@ namespace OnlineLibraryApi.Controllers
         [HttpGet("search")]
         public ActionResult<IEnumerable<Book>> OrFind(string? title = null, string? author = null, int? yearOfPublication = null, string? sortBy = null)
         {
-            return _bookManager.Find(FindType.OR, title ?? "", author ?? "", yearOfPublication ?? 0, sortBy ?? "").ToList();
+            return _bookManager.Find(FindType.OR, title, author, yearOfPublication, sortBy).ToList();
         }
 
         [HttpGet("andsearch")]
         public ActionResult<IEnumerable<Book>> AndFind(string? title = null, string? author = null, int? yearOfPublication = null, string? sortBy = null)
         {
-            return _bookManager.Find(FindType.AND, title ?? "", author ?? "", yearOfPublication ?? 0, sortBy ?? "").ToList();
+            return _bookManager.Find(FindType.AND, title, author, yearOfPublication, sortBy).ToList();
         }
 
         [HttpGet("{bookId}")]

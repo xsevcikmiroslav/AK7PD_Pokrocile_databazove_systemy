@@ -3,7 +3,6 @@ using DataLayer.DTO;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using SharpCompress.Common;
 
 namespace DataLayer.Repositories
 {
@@ -16,10 +15,11 @@ namespace DataLayer.Repositories
     public abstract class Repository<T> : IRepository<T>
         where T : BaseDto, new()
     {
-        protected static IMongoCollection<BsonDocument> _mongoCollection;
+        protected IMongoCollection<BsonDocument> _mongoCollection;
 
+        // ATLAS connectionString: mongodb+srv://MirSevMongo:thoHOQXpmkU7m7kx@cluster0.08jipe7.mongodb.net/?retryWrites=true&w=majority
         public Repository(string collectionName)
-            : this ("mongodb://localhost:27017"/*"mongodb+srv://MirSevMongo:thoHOQXpmkU7m7kx@cluster0.08jipe7.mongodb.net/?retryWrites=true&w=majority"*/, collectionName)
+            : this ("mongodb://localhost:27017", collectionName)
         { }
 
         public Repository(string connectionString, string collectionName)

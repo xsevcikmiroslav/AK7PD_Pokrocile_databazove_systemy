@@ -16,6 +16,12 @@ namespace BusinessLayerTests
             _bookManager = _serviceProvider.GetService<IBookManager>();
         }
 
+        [TestInitialize]
+        public void Init()
+        {
+            _bookManager.DeleteAllBooks();
+        }
+
         [TestMethod]
         public void BookManager_CreateBook_Success()
         {

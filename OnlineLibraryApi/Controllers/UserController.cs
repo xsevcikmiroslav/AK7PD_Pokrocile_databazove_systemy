@@ -29,7 +29,13 @@ namespace OnlineLibraryApi.Controllers
         [HttpPost("create")]
         public ActionResult<User> CreateUser([FromBody] User user)
         {
-            return _userManager.CreateUser((User)Request.HttpContext.Items["User"], user);
+            return _userManager.CreateUser(LoggedUserIsAdmin(), user);
+        }
+
+        private bool LoggedUserIsAdmin()
+        {
+            var loggedInUser = (User)Request.HttpContext.Items["User"];
+            return loggedInUser == null ? false : loggedInUser.IsAdmin;
         }
 
         [HttpDelete("{userId}/delete")]
@@ -37,18 +43,6 @@ namespace OnlineLibraryApi.Controllers
         {
             _userManager.DeleteUser(userId);
             return Ok();
-        }
-
-        [HttpGet("search")]
-        public ActionResult<IEnumerable<User>> OrFind(string? firstname = null, string? surname = null, string? address = null, string? pin = null, string? sortBy = null)
-        {
-            return _userManager.Find(FindType.OR, string.Empty, firstname ?? "", surname ?? "", address ?? "", pin ?? "", sortBy ?? "").ToList();
-        }
-
-        [HttpGet("andsearch")]
-        public ActionResult<IEnumerable<User>> AndFind(string? firstname = null, string? surname = null, string? address = null, string? pin = null, string? sortBy = null)
-        {
-            return _userManager.Find(FindType.AND, string.Empty, firstname ?? "", surname ?? "", address ?? "", pin ?? "", sortBy ?? "").ToList();
         }
 
         [HttpGet("{userId}")]
@@ -86,7 +80,7 @@ namespace OnlineLibraryApi.Controllers
         [HttpPut("update")]
         public ActionResult<User> UpdateUser([FromBody] User user)
         {
-            return _userManager.UpdateUser((User)Request.HttpContext.Items["User"], user);
+            return _userManager.UpdateUser(LoggedUserIsAdmin(), user);
         }
     }
 }

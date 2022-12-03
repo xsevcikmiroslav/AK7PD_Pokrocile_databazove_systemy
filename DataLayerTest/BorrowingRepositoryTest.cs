@@ -12,14 +12,14 @@ namespace DataLayerTest
     {
         protected const string CONNECTION_STRING = "mongodb://localhost:27017";
 
-        protected IBorrowingRepository borrowingRepository;
+        protected ICurrentBorrowingRepository borrowingRepository;
         protected IBookRepository bookRepository;
         protected IUserRepository userRepository;
 
         [TestInitialize]
         public void Init()
         {
-            borrowingRepository = new BorrowingRepository(CONNECTION_STRING);
+            borrowingRepository = new CurrentBorrowingRepository(CONNECTION_STRING);
             bookRepository = new BookRepository(CONNECTION_STRING);
             userRepository = new UserRepository(CONNECTION_STRING);
         }

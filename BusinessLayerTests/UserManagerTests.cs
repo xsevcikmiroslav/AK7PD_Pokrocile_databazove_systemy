@@ -11,18 +11,27 @@ namespace BusinessLayerTests
     {
         private IUserManager _userManager;
         private IBookManager _bookManager;
+        private IAdminManager _adminManager;
 
         public UserManagerTests()
         {
             _userManager = _serviceProvider.GetService<IUserManager>();
             _bookManager = _serviceProvider.GetService<IBookManager>();
+            _adminManager = _serviceProvider.GetService<IAdminManager>();
+        }
+
+        [TestInitialize]
+        public void Init()
+        {
+            _bookManager.DeleteAllBooks();
+            _userManager.DeleteAllUsers();
         }
 
         [TestMethod]
         public void UserManager_CreateUser_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -53,7 +62,8 @@ namespace BusinessLayerTests
         public void BookManager_BorrowAndThenReturnBook_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
+            _adminManager.ApproveUser(newUser._id);
 
             var newBook = GetBookEntity();
             newBook.NumberOfLicences = 1;
@@ -75,6 +85,12 @@ namespace BusinessLayerTests
 
             Assert.IsNotNull(book);
             Assert.IsTrue(newBook.CanBeBorrowed);
+
+            var currentlyBorrowed = _userManager.GetUsersCurrentlyBorrowedBooks(newUser._id);
+            Assert.AreEqual(0, currentlyBorrowed.Count());
+
+            var historicallyBorrowed = _userManager.GetUsersBorrowedBooksHistory(newUser._id);
+            Assert.AreEqual(1, historicallyBorrowed.Count());
         }
 
         private Book GetBookEntity()
@@ -97,12 +113,12 @@ namespace BusinessLayerTests
                 var newUser = GetUserEntity();
                 newUser.Username = $"{newUser.Username}{i}";
                 newUser.Address.DescriptiveNumber += $"{i}";
-                newUser = _userManager.CreateUser(new User(), newUser);
+                newUser = _userManager.CreateUser(false, newUser);
                 Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             }
 
-            var users = _userManager.Find(FindType.AND, "MirSev2", string.Empty, string.Empty, string.Empty, "0101010008", string.Empty);
+            var users = _adminManager.Find(FindType.AND, "MirSev2", string.Empty, string.Empty, string.Empty, "0101010008", string.Empty);
 
             Assert.IsNotNull(users);
             Assert.AreEqual(1, users.Count());
@@ -118,12 +134,12 @@ namespace BusinessLayerTests
                 var newUser = GetUserEntity();
                 newUser.Username = $"{newUser.Username}{i}";
                 newUser.Address.DescriptiveNumber += $"{i}";
-                newUser = _userManager.CreateUser(new User(), newUser);
+                newUser = _userManager.CreateUser(false, newUser);
                 Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             }
 
-            var users = _userManager.Find(FindType.AND, "MirSev10", string.Empty, string.Empty, string.Empty, "0101010008", string.Empty);
+            var users = _adminManager.Find(FindType.AND, "MirSev10", string.Empty, string.Empty, string.Empty, "0101010008", string.Empty);
 
             Assert.IsNotNull(users);
             Assert.AreEqual(0, users.Count());
@@ -138,12 +154,12 @@ namespace BusinessLayerTests
                 var newUser = GetUserEntity();
                 newUser.Username = $"{newUser.Username}{i}";
                 newUser.Address.DescriptiveNumber += $"{i}";
-                newUser = _userManager.CreateUser(new User(), newUser);
+                newUser = _userManager.CreateUser(false, newUser);
                 Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
                 Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             }
 
-            var users = _userManager.Find(FindType.OR, "MirSev1", string.Empty, string.Empty, "11242", string.Empty, string.Empty);
+            var users = _adminManager.Find(FindType.OR, "MirSev1", string.Empty, string.Empty, "11242", string.Empty, string.Empty);
 
             Assert.IsNotNull(users);
             Assert.AreEqual(2, users.Count());
@@ -155,7 +171,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateUserAndTryLoginWithValidCredentials_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -172,7 +188,7 @@ namespace BusinessLayerTests
         public void UserManager_CreateUserAndTryLoginWithInvalidCredentials_Success()
         {
             var newUser = GetUserEntity();
-            newUser = _userManager.CreateUser(new User(), newUser);
+            newUser = _userManager.CreateUser(false, newUser);
             Assert.IsFalse(string.IsNullOrEmpty(newUser._id));
             Assert.AreNotEqual(ObjectId.Empty.ToString(), newUser._id);
             Assert.AreEqual("MirSev", newUser.Username);
@@ -184,7 +200,10 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-            var userId = "876543218765432187654321";
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(false, newUser);
+            var userId = newUser._id;
+            _adminManager.ApproveUser(userId);
 
             for (int i = 1; i <= 10; i++)
             {
@@ -210,7 +229,10 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_GetUsersCurrentlyBorrowedBooksWhenUserHasNoBorrowedBooks_NoBooksReturned()
         {
-            var userId = "876543218765432187654321";
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(false, newUser);
+            var userId = newUser._id;
+            _adminManager.ApproveUser(userId);
 
             for (int i = 1; i <= 10; i++)
             {
@@ -237,7 +259,10 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasSomeBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-            var userId = "876543218765432187654321";
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(false, newUser);
+            var userId = newUser._id;
+            _adminManager.ApproveUser(userId);
 
             for (int i = 1; i <= 10; i++)
             {
@@ -263,7 +288,10 @@ namespace BusinessLayerTests
         [TestMethod]
         public void BookManager_GetUsersBorrowedBooksHistoryWhenUserHasNoBorrowedBooks_BooksSuccessfullyRetrieved()
         {
-            var userId = "876543218765432187654321";
+            var newUser = GetUserEntity();
+            newUser = _userManager.CreateUser(false, newUser);
+            var userId = newUser._id;
+            _adminManager.ApproveUser(userId);
 
             for (int i = 1; i <= 10; i++)
             {

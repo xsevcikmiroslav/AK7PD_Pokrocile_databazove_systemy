@@ -6,6 +6,7 @@ using OnlineLibraryApi.Authentication;
 using AutoMapper;
 using BusinessLayer.BusinessObjects;
 using OnlineLibraryApi;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,8 @@ builder.Services.AddAutoMapper(mc =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
+builder.Services.AddScoped<IBorrowingHistoryRepository, BorrowingHistoryRepository>();
+builder.Services.AddScoped<ICurrentBorrowingRepository, CurrentBorrowingRepository>();
 
 builder.Services.AddScoped<IUserManager, UserManager>();
 builder.Services.AddScoped<IAdminManager, AdminManager>();
@@ -24,7 +26,14 @@ builder.Services.AddScoped<IBookManager, BookManager>();
 
 builder.Services.AddScoped<IInit, Init>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    // serialize enums as strings in api responses (e.g. Role)
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+    // ignore omitted parameters on models to enable optional params (e.g. User update)
+    x.JsonSerializerOptions.IgnoreNullValues = true;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

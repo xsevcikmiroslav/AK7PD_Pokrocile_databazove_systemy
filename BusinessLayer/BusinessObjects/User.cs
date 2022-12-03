@@ -1,4 +1,6 @@
-﻿namespace BusinessLayer.BusinessObjects
+﻿using System.Text.Json.Serialization;
+
+namespace BusinessLayer.BusinessObjects
 {
     public enum AccountState
     {
@@ -32,6 +34,7 @@
 
         public bool CanBorrowAnotherBook => MAX_NUMBER_OF_BORROWED_BOOKS > Borrowings.Count();
 
+        [JsonIgnore]
         public override bool IsValid =>
             !string.IsNullOrEmpty(Firstname)
             && !string.IsNullOrEmpty(Surname)

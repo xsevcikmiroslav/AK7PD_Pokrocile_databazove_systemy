@@ -2,59 +2,16 @@
 using DataLayer.DTO;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Net;
 
 namespace DataLayer.Repositories
 {
-    public class BorrowingRepository : Repository<BorrowingDto>, IBorrowingRepository
+    public abstract class BorrowingRepository : Repository<BorrowingDto>, IBorrowingRepository
     {
-        public BorrowingRepository()
-            : base("Borrowing") { }
+        public BorrowingRepository(string collectionName)
+            : base(collectionName) { }
 
-        public BorrowingRepository(string connectionString)
-            : base(connectionString, "Borrowing") { }
-
-        public IEnumerable<BorrowingDto> GetUsersBorrowingsHistory(string userId)
-        {
-            return GetBorrowingsHistory("UserId", userId);
-        }
-
-        private IEnumerable<BorrowingDto> GetBorrowingsHistory(string foreignIdName, string foreignIdValue)
-        {
-            var filterBuilder = Builders<BsonDocument>.Filter;
-
-            var filter = filterBuilder.Eq(foreignIdName, ObjectId.Parse(foreignIdValue));
-
-            var entities = _mongoCollection.Find(filter).ToEnumerable();
-            foreach (var entity in entities)
-            {
-                yield return MapBsonToDto(entity);
-            }
-        }
-
-        public IEnumerable<BorrowingDto> GetUsersCurrentBorrowings(string userId)
-        {
-            return GetCurrentBorrowings("UserId", userId);
-        }
-
-        private IEnumerable<BorrowingDto> GetCurrentBorrowings(string foreignIdName, string foreignIdValue)
-        {
-            var filterBuilder = Builders<BsonDocument>.Filter;
-
-            var filters = new FilterDefinition<BsonDocument>[] {
-                filterBuilder.Eq(foreignIdName, ObjectId.Parse(foreignIdValue)),
-                filterBuilder.Eq("DateTimeReturned", DateTime.MinValue),
-                filterBuilder.Gt("DateTimeBorrowed", DateTime.MinValue)
-            };
-
-            var filter = filterBuilder.And(filters);
-
-            var entities = _mongoCollection.Find(filter).ToEnumerable();
-            foreach (var entity in entities)
-            {
-                yield return MapBsonToDto(entity);
-            }
-        }
+        public BorrowingRepository(string connectionString, string collectionName)
+            : base(connectionString, collectionName) { }
 
         public BorrowingDto GetByUserAndBook(string userId, string bookId)
         {
@@ -67,18 +24,12 @@ namespace DataLayer.Repositories
 
             var filter = filterBuilder.And(filters);
 
-            var entity = _mongoCollection.Find(filter).FirstOrDefault();
+            var queryResult = _mongoCollection.Find(filter);
+
+            var sort = Builders<BsonDocument>.Sort.Descending("DateTimeBorrowed");
+            var entity = queryResult.Sort(sort).FirstOrDefault();
+
             return MapBsonToDto(entity);
-        }
-
-        public IEnumerable<BorrowingDto> GetBookBorrowingsHistory(string bookId)
-        {
-            return GetBorrowingsHistory("BookId", bookId);
-        }
-
-        public IEnumerable<BorrowingDto> GetBookCurrentBorrowings(string bookId)
-        {
-            return GetCurrentBorrowings("BookId", bookId);
         }
     }
 }
