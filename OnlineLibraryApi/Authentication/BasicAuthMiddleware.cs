@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Managers.Interfaces;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -17,14 +18,17 @@ namespace OnlineLibraryApi.Authentication
         {
             try
             {
-                var authHeader = AuthenticationHeaderValue.Parse(context.Request.Headers["Authorization"]);
-                var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
-                var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
-                var username = credentials[0];
-                var password = credentials[1];
+                if (context.Request.Headers.Any(e => e.Key.Equals("Authorization")))
+                {
+                    var authHeader = AuthenticationHeaderValue.Parse(context.Request.Headers["Authorization"]);
+                    var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
+                    var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
+                    var username = credentials[0];
+                    var password = credentials[1];
 
-                // authenticate credentials with user service and attach user to http context
-                context.Items["User"] = userManager.LoginUser(username, password);
+                    // authenticate credentials with user service and attach user to http context
+                    context.Items["User"] = userManager.LoginUser(username, password);
+                }
             }
             catch
             {

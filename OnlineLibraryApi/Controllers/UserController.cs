@@ -1,5 +1,4 @@
 ﻿using BusinessLayer.BusinessObjects;
-using BusinessLayer.Managers;
 using BusinessLayer.Managers.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using OnlineLibraryApi.Authentication;

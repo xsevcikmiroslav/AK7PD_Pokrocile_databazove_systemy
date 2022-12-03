@@ -7,6 +7,7 @@ using AutoMapper;
 using BusinessLayer.BusinessObjects;
 using OnlineLibraryApi;
 using System.Text.Json.Serialization;
+using OnlineLibraryApi.ExceptionHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,14 +27,18 @@ builder.Services.AddScoped<IBookManager, BookManager>();
 
 builder.Services.AddScoped<IInit, Init>();
 
-builder.Services.AddControllers().AddJsonOptions(x =>
-{
-    // serialize enums as strings in api responses (e.g. Role)
-    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+builder.Services.AddControllers(options =>
+    {
+        options.Filters.Add<HttpResponseExceptionFilter>();
+    })
+    .AddJsonOptions(x =>
+    {
+        // serialize enums as strings in api responses (e.g. Role)
+        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-    // ignore omitted parameters on models to enable optional params (e.g. User update)
-    x.JsonSerializerOptions.IgnoreNullValues = true;
-});
+        // ignore omitted parameters on models to enable optional params (e.g. User update)
+        x.JsonSerializerOptions.IgnoreNullValues = true;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -55,6 +60,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler("/error");
 
 app.UseAuthorization();
 
