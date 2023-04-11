@@ -17,7 +17,6 @@ namespace DataLayer.Repositories
     {
         protected IMongoCollection<BsonDocument> _mongoCollection;
 
-        // ATLAS connectionString: mongodb+srv://MirSevMongo:thoHOQXpmkU7m7kx@cluster0.08jipe7.mongodb.net/?retryWrites=true&w=majority
         public Repository(string collectionName)
             : this ("mongodb://localhost:27017", collectionName)
         { }
