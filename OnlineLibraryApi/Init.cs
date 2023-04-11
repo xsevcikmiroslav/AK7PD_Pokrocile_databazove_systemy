@@ -617,7 +617,7 @@ namespace OnlineLibraryApi
                 "Zimiamvia|E. R. Eddison",
                 "Zoo City|Lauren Beukes"
             };
-
+            /*
             foreach (var book in books)
             {
                 _bookManager.CreateBook(new Book
@@ -629,7 +629,7 @@ namespace OnlineLibraryApi
                     NumberOfPages = new Random().Next(100, 500)
                 });
             }
-
+            
             for (int i = 1; i <= 5; i++)
             {
                 _userManager.CreateUser(i <= 2, new User
@@ -661,6 +661,7 @@ namespace OnlineLibraryApi
             var bookToBorrow3 = _bookManager.Find(BusinessLayer.Managers.FindType.AND, "Sil", "Tolkien").First();
             var user2 = _adminManager.Find(BusinessLayer.Managers.FindType.AND, "Username2").First();
             _userManager.BorrowBook(user2._id, bookToBorrow3._id);
+            */
         }
     }
 }

@@ -19,6 +19,7 @@ namespace OnlineLibraryApi.Controllers
         }
 
         [HttpPost("create")]
+        [AdminAuthorize]
         public ActionResult<Book> CreateBook([FromBody] Book book)
         {
             return _bookManager.CreateBook(book);

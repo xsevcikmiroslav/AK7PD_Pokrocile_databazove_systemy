@@ -14,6 +14,8 @@ namespace BusinessLayer.BusinessObjects
 
         public int NumberOfLicences { get; set; }
 
+        public string ImageBase64 { get; set; } = string.Empty;
+
         public IEnumerable<Borrowing> Borrowings { get; set; } = Array.Empty<Borrowing>();
 
         public bool CanBeBorrowed

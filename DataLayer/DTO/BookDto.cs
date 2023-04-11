@@ -12,6 +12,8 @@
         
         public int NumberOfLicences { get; set; }
 
+        public string ImageBase64 { get; set; } = string.Empty;
+
         public override string ToString()
         {
             return $"Title: {Title}; Author: {Author}; NumberOfPages: {NumberOfPages}; YearOfPublication: {YearOfPublication}; NumberOfLicences: {NumberOfLicences}";
